@@ -1,0 +1,82 @@
+# function to save an R object into several zip files within a folder ending with .RDSX (.RDSX format)
+# it uses p7zip (sudo apt install p7zip)
+#size of each zip file in MB
+# rdsx.file would be the name of the folder containing zip files
+saveRDSX <- function(object, rdsx.file, size = 49, verbose = FALSE){
+  
+  # create folder if doesn't exists, if exists delete previous files (to avoid errors when rewriting)
+  if (!dir.exists(rdsx.file))
+    dir.create(rdsx.file) else unlink(list.files(pattern = "rdsx."))
+  
+  
+  # set wd to new folder
+  pth <- getwd()
+  on.exit(setwd(pth), add = TRUE)
+  setwd(rdsx.file)
+  
+  # RDS file name
+  rds_file <- gsub("\\.RDSX$", ".RDS",ignore.case = TRUE, rdsx.file)
+  
+  # save object as RDS in new folder
+  if (verbose)
+    message("saving temporary RDS")
+  saveRDS(object, rds_file)
+  
+  # remove R object
+  rm(object)
+  
+  # make call for zipping several files
+  # cll <- paste0("split -b ", size, "M ", rds_file, " ", verb," ./", file, "/ --additional-suffix=.zip")
+  
+  # 7z -v6m a split.zip. t10XX.RDS
+  cll <- paste0("7z", " -v", size, "M a rdsx.")
+
+   # run call
+  if (verbose)
+    message("zipping files")
+
+    system(cll)
+
+  unlink(rds_file)  
+}
+
+##########################################################
+
+# function to read .RDSX folders into an R object
+
+readRDSX <- function(rdsx.file) {
+ 
+  # set wd to new folder
+  pth <- getwd()
+  on.exit(setwd(pth))
+  setwd(rdsx.file)
+  
+  rdsxs <- list.files(pattern = "rdsx") 
+  
+  # get name of first file to put it in call
+  first_file <- sort(rdsxs)[1]
+  #7za x rds.001
+  
+  # make call
+  cll <- paste0("7za x ", first_file)  
+
+  # run call
+  system(cll)
+
+  # read RDS
+  output <- readRDS(gsub("\\.RDSX$", ".RDS", rdsx.file))
+  
+  # remove 
+  unlink(rdsxs)
+
+  return(output)      
+}
+
+## example
+# object <- readRDS("test_10.RDS")
+# 
+# saveRDSX(object, rdsx.file = "t10XX.RDSX", size = 6, verbose =  TRUE)
+# 
+# obj2 <- readRDSX(rdsx.file = "t10XX.RDSX")
+# 
+# identical(object, obj2)

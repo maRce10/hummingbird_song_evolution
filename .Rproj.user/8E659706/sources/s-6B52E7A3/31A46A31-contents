@@ -1,0 +1,2733 @@
+---
+title: <center><font size="6"><b>Evolutionary dynamics of vocal complexity in hummingbirds</b></font></center>
+subtitle: <center><font size="5"><b>Hummingbird song evolution</b></font></center>
+author: <center><font size="4"> Marcelo Araya-Salas & Daniel Caetano</font></center>
+date: <center>`r format(Sys.Date(), "%d-%m-%Y")`</center>
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+fontsize: 12pt 
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r packages, message=FALSE, warning = FALSE, echo = FALSE, eval = TRUE, include = FALSE}
+
+#clean session
+rm(list = ls())
+
+# unload all non-based packages
+out <- sapply(paste('package:', names(sessionInfo()$otherPkgs), sep = ""), function(x) try(detach(x, unload = FALSE, character.only = TRUE), silent = T))
+
+## add 'developer/' to packages to be installed from github
+x <- c("OUwie","geomorph", "mvMORPH", "Caetanods/ratematrix", "ggplot2", "viridis",  "kableExtra", "ape", "phytools", "phangorn", "pbapply", "tidyr", "YuLab-SMU/ggtree", 
+       "MCMCglmm", "spatstat", "raster", "adehabitatHR")
+
+aa <- lapply(x, function(y) {
+  
+  # get pakage name
+  pkg <- strsplit(y, "/")[[1]]
+  pkg <- pkg[length(pkg)]
+  
+  # check if installed, if not then install 
+  if (!pkg %in% installed.packages()[,"Package"])  {
+
+      if (grepl("/", y))  devtools::install_github(y, force = TRUE) else
+    install.packages(y) 
+    }
+
+  # load package
+  try(require(pkg, character.only = T), silent = T)
+})
+```
+
+
+```{r functions and parameters, eval = TRUE, echo = FALSE}
+
+cols <- viridis(10)
+colst <- viridis(10,alpha = 0.5)
+h.s.cols <- c(viridis(8)[7], viridis(5)[3])
+h.s.cols.t <- c(viridis(8, alpha = 0.4)[7], viridis(5,alpha = 0.4)[3])
+
+# ggplot2 theme
+theme_set(theme_classic(base_size = 14,base_family = "Arial"))
+
+# main tree
+phy <- read.tree("consensus_tree_swifts_hummingbirds_and_nighjars_max_cred.tree")
+
+#target clades
+trg.clds <- c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees", "Swifts", "Nightjars")
+
+# read trait data ###
+
+# read original data
+data.file <- read.csv("All songs complexity parameters nightjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+trait <- as.matrix(data.file[, c(2:4, 7)])
+spp <- as.character(data.file[,1])
+unique_species <- unique( spp )
+
+rownames(trait) <- as.character(data.file$species)
+
+trait.list <- split(as.data.frame(trait), f = rownames(trait))
+
+trait.list <- sapply(trait.list, as.matrix)
+trait.list <- sapply(trait.list, function(x) {
+  rownames(x) <- NULL
+  return(x)}
+  )
+
+## complexity parameters 
+sp <- read.csv("Element parameters nighjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+sp$species <- gsub(" ", "_", sp$Species)
+
+sp2 <- sp[!duplicated(sp$species), c("species", "Clade")]
+
+## count of species by clade
+sp.count <- as.data.frame(table(sp2$Clade))
+names(sp.count) <- c("clade", "sp.count")
+
+phys <- read.tree("100_trees_swifts_hummingbirds_and_nightjars.trees")
+# phy <- read.tree("consensus_tree_swifts_and_hummingbirds_max_cred.tree")
+
+impute.df <- read.csv("Imputed species by source hummingbirds.csv", stringsAsFactors = FALSE)
+
+# remove imputed ones
+phys <- lapply(phys, function(x) drop.tip(phy = x, tip = impute.df$species))
+
+class(phys) <- "multiPhylo"
+
+trait.list <- split(as.data.frame(trait), f = rownames(trait))
+
+trait.list <- sapply(trait.list, as.matrix)
+trait.list <- sapply(trait.list, function(x) {
+  rownames(x) <- NULL
+  return(x)}
+  )
+
+# keep only hummers
+phy.hmm <- drop.tip(phy, tip = unique(sp$species[!sp$Clade %in% c("Swifts", "Nightjars")]))
+phys.hmm <- lapply(phys, function(x) drop.tip(phy = x, tip = unique(sp$species[!sp$Clade %in% c("Swifts", "Nightjars")])))
+
+class(phys.hmm) <- "multiPhylo"
+
+keep <- names(trait.list) %in% phys.hmm[[1]]$tip.label
+trait.list.pruned <- trait.list[keep]
+
+# source('./ratematrix_funs.R')
+```
+
+```{r save simmap multiphylo, eval = FALSE, echo = FALSE}
+  ### SIMMAPS
+  
+  ### 2 regimes
+  phys <- read.tree("100_trees_swifts_hummingbirds_and_nightjars.trees")
+  phys.sp <- phys[[1]]$tip.label
+  
+  # create regime data
+  phy_regime_data <- rep("humm", times = length( phys[[1]]$tip.label))
+  names(phy_regime_data) <- phys[[1]]$tip.label
+  
+  phy_regime_data[names(phy_regime_data) %in% sp$species[sp$Clade == "Swifts"]] <- "swift"
+  
+  phy_regime_data[names(phy_regime_data) %in% sp$species[sp$Clade == "Nightjars"]] <- "nightj"
+  
+  # phy_regime_data
+  phy.regimes <- phytools::make.simmap(tree = phys, x = phy_regime_data, model = "ARD", nsim = 1)
+  
+  saveRDS(phy.regimes, file = "simmap.hmm.swfits.nightjars.rds")
+
+```
+
+```{r bind hummer and swift trees, eval = FALSE, echo = FALSE}
+100_trees_swifts_and_hummingbirds
+## Find the MRCA for swifts and humm.
+prum_tree <- read.nexus( file = "Avian-TimeTree.nex" )
+
+plot( prum_tree ); axisPhylo()
+prum_spp <- prum_tree$tip.label
+age_root <- vcv.phylo( prum_tree )[1,1]
+focus <- c("Hemiprocne", "Streptoprocne", "Chaetura", "Topaza", "Phaethornis", "Archilochus")
+focus_id <- sapply(focus, function(y) grep(y, x = prum_spp) )
+focus_spp <- prum_spp[focus_id]
+focus_node_height <- findMRCA(tree = prum_tree, tips = focus_spp, type = "height")
+focus_age <- age_root - focus_node_height ## Age of the MRCA for swifts and hummingbirds.
+
+## Import and bind the two phylogenies.
+swift_trees <- read.tree("100_trees_31_swift_species_birdtree.trees")
+capr_trees <- read.tree("caprimulgidae_100_trees_birdtree_fix_names.nex")
+humm_trees <- read.tree( "100_trees_265_hummingbird_species_1_swift.trees" )
+humm_trees <- lapply(humm_trees, function(x) drop.tip(phy = x, tip = "Chaetura_pelagica") )
+
+hmm.swft.trees <- pblapply(1:100, function(y){
+  
+  swift_phy <- swift_trees[[y]]
+  humm_phy <- humm_trees[[y]]
+
+  ## Add a root branch to be able to bind the two trees.
+  age_swift <- vcv.phylo( swift_phy )[1,1]
+  age_humm <- vcv.phylo( humm_phy )[1,1]
+  swift_phy$root.edge <- focus_age - age_swift
+  humm_phy$root.edge <- focus_age - age_humm
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+  full_tree <- swift_phy + humm_phy
+
+  return(full_tree)  
+  })
+
+class(hmm.swft.trees) <- "multiPhylo"
+
+#Check
+is.binary.tree(hmm.swft.trees)
+  
+all(sapply(hmm.swft.trees, is.ultrametric.phylo))
+
+#all clades are monophyletic
+sp <- read.csv("Element parameters nighjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+sp <- sp[!duplicated(sp$Species), ]
+
+sp$Species <- gsub(" ", "_", sp$Species)
+
+# select clades with more than 1 species
+clds <- c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees", "Mtn. Gems", "Topazes")
+
+# all mono?
+all(sapply(hmm.swft.trees, function(Y) all(sapply(clds, function(x) is.monophyletic(Y, tips = sp$Species[sp$Clade == x])))))
+
+## Write the full tree to file.
+write.tree(phy = hmm.swft.trees, file = "100_trees_nightjars_swifts_and_hummingbirds.trees")
+
+## consensus tree
+# taken from http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
+mc.swft.tree <- maxCladeCred(swift_trees)
+mc.humm.tree <- maxCladeCred(humm_trees)
+ 
+## Add a root branch to be able to bind the two trees.
+age_swift <- vcv.phylo(mc.swft.tree)[1,1]
+age_humm <- vcv.phylo(mc.humm.tree)[1,1]
+mc.swft.tree$root.edge <- focus_age - age_swift
+mc.humm.tree$root.edge <- focus_age - age_humm
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+hmm.swft.tree <- mc.swft.tree + mc.humm.tree
+
+plot.phylo(hmm.swft.tree, show.tip.label = FALSE)
+
+write.tree(phy = hmm.swft.tree, file = "consensus_tree_swifts_and_hummingbirds_max_cred.tree")
+
+```
+
+```{r bind apodiformes and caprimulgidae trees, eval = FALSE, echo = FALSE}
+
+## Find the MRCA for swifts and humm.
+prum_tree <- read.nexus( file = "Avian-TimeTree.nex" )
+
+plot( prum_tree ); axisPhylo()
+prum_spp <- prum_tree$tip.label
+age_root <- vcv.phylo( prum_tree )[1,1]
+focus <- c("Hemiprocne", "Streptoprocne", "Chaetura", "Topaza", "Phaethornis", "Archilochus", "Chordeiles", "Caprimulgus")
+focus_id <- sapply(focus, function(y) grep(y, x = prum_spp) )
+focus_spp <- prum_spp[focus_id]
+focus_node_height <- findMRCA(tree = prum_tree, tips = focus_spp, type = "height")
+focus_age <- age_root - focus_node_height ## Age of the MRCA for swifts and hummingbirds.
+
+## Import and bind the two phylogenies.
+apod.trees <- read.tree("100_trees_swifts_and_hummingbirds.trees")
+
+capr_trees <- read.tree("caprimulgidae_100_trees_birdtree_fix_names.nex")
+
+hmm.swft.cpr.trees <- pblapply(1:100, function(y){
+  
+  capr_phy <- capr_trees[[y]]
+  apod_phy <- apod.trees[[y]]
+
+  ## Add a root branch to be able to bind the two trees.
+  age_capr <- vcv.phylo( capr_phy )[1,1]
+  age_apod <- vcv.phylo( apod_phy )[1,1]
+  apod_phy$root.edge <- focus_age - age_apod
+  capr_phy$root.edge <- focus_age - age_capr
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+  full_tree <- capr_phy + apod_phy
+
+  if (!is.binary(full_tree))
+      full_tree <- multi2di(full_tree)
+  
+  if (!is.ultrametric(full_tree))
+      full_tree <- force.ultrametric(full_tree, method = "nnls")
+    
+  return(full_tree)  
+  })
+
+class(hmm.swft.cpr.trees) <- "multiPhylo"
+
+#Check
+all(is.binary.tree(hmm.swft.cpr.trees))
+  
+all(sapply(hmm.swft.cpr.trees, is.ultrametric.phylo))
+
+# #all clades are monophyletic
+# sp <- read.csv("Element parameters hummingbirds and swifts.csv", stringsAsFactors = FALSE)
+# 
+# sp <- sp[!duplicated(sp$Species), ]
+# 
+# sp$Species <- gsub(" ", "_", sp$Species)
+# 
+# # select clades with more than 1 species
+# clds <- c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees", "Mtn. Gems", "Topazes")
+# 
+# # all mono?
+# all(sapply(hmm.swft.trees, function(Y) all(sapply(clds, function(x) is.monophyletic(Y, tips = sp$Species[sp$Clade == x])))))
+
+## Write the full tree to file.
+write.tree(phy = hmm.swft.cpr.trees, file = "100_trees_swifts_hummingbirds_and_nightjars.trees")
+
+## consensus tree
+# taken from http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
+mc.apod.tree <- maxCladeCred(apod.trees)
+mc.capr.tree <- maxCladeCred(capr_trees)
+ 
+## Add a root branch to be able to bind the two trees.
+age_apod <- vcv.phylo(mc.apod.tree)[1,1]
+age_capr <- vcv.phylo(mc.capr.tree)[1,1]
+mc.apod.tree$root.edge <- focus_age - age_apod
+mc.capr.tree$root.edge <- focus_age - age_capr
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+hmm.swft.cpr.tree <- mc.capr.tree + mc.apod.tree
+
+plot.phylo(hmm.swft.cpr.tree, show.tip.label = FALSE)
+
+write.tree(phy = hmm.swft.cpr.tree, file = "consensus_tree_swifts_hummingbirds_and_nighjars_max_cred.tree")
+
+```
+
+# presentation graphs
+```{r vocal learning graph, eval = TRUE, echo = FALSE}
+
+prum_tree <- read.nexus(file = "Avian-TimeTree.nex")
+
+clm <- read.csv("clements_bird_list.csv", stringsAsFactors = FALSE)
+
+clm$sp <- gsub(" ", "_", clm$SCI_NAME)
+
+clm$ORDER1[clm$FAMILY == "Tyrannidae (Tyrant Flycatchers)"] <- "Suboscines"
+
+clm$ORDER1[clm$FAMILY == "Trochilidae (Hummingbirds)"] <- "Trochiliformes"
+
+clm$ORDER1[clm$FAMILY == "Apodidae (Swifts)"] <- "Apodiformes"
+
+prum_tree <- drop.tip(prum_tree, tip = setdiff(prum_tree$tip.label, clm$sp
+))
+
+clm <- clm[clm$sp %in% prum_tree$tip.label, ]
+clm <- clm[match(prum_tree$tip.label, clm$sp), ]
+prum_tree <- drop.tip(prum_tree, tip = clm$sp[duplicated(clm$ORDER1)])
+
+clm <- clm[!duplicated(clm$ORDER1), ]
+
+prum_tree$tip.label <- as.character(clm$ORDER1)
+
+prum_tree$tip.label[prum_tree$tip.label == "Passeriformes"] <- "Oscines"
+
+# fix branches phylo
+prum_tree$edge.length[prum_tree$edge.length > 30] <- prum_tree$edge.length[prum_tree$edge.length > 30] - 36
+
+# plot(prum_tree)
+# nodelabels()
+trg.ordrs <- c("Trochiliformes", "Oscines", "Psittaciformes")
+
+learn.clds <- ifelse(prum_tree$tip.label %in% trg.ordrs, "vocal learning", "")     
+
+colors <- rep(adjustcolor("gray", 0.7), Ntip(prum_tree))
+colors[prum_tree$tip.label == "Suboscines"] <- cols[2]
+colors[learn.clds == "vocal learning"] <-  cols[8]
+# colors[learn.clds == ""] <-  "white"
+
+annt <- data.frame(taxa = prum_tree$tip.label, learn = learn.clds, size = ifelse(learn.clds == "", 0.1, 3), colors)  
+
+p <- ggtree(prum_tree,layout = "rectangular", ladderize = FALSE, color = cols[4], lwd = 0.8) + geom_tiplab(hjust = 0, offset = 0.7, color = colors)
+
+p <- ggtree::rotate(p, 56)
+p <- p %<+% annt + 
+  # geom_cladelabel(node = hjust = 0, offset = 0.1, aes(color = learn)) + 
+  theme(legend.position="none") +
+  geom_tippoint(aes(shape = learn, color = learn, size = size)) + 
+  scale_shape_manual(values = c("\u2605", "\u25CF"), guide = FALSE)  +
+  scale_color_manual(values = c("gray", cols[8])) +
+  xlim(NA, 50)
+
+edge <- data.frame(prum_tree$edge, edge_num=1:nrow(prum_tree$edge))
+colnames(edge)=c("parent", "node", "edge_num")
+edge <- edge[edge$node == 56, , drop = FALSE]
+edge$edge_num <- "Passeriformes"
+p %<+% edge + geom_label(aes(x=branch, label=edge_num), fill = colst[6], hjust = 0, size = 4)
+
+# ggsave(filename = "./images/learning.evo.orders.jpg", dpi = 300, scale = 1.2, height = 4.5, width = 5)
+
+
+### black font plot
+colors <- rep(adjustcolor("black", 1), Ntip(prum_tree))
+colors[prum_tree$tip.label == "Suboscines"] <- cols[2]
+colors[learn.clds == "vocal learning"] <-  cols[8]
+# colors[learn.clds == ""] <-  "white"
+
+annt <- data.frame(taxa = prum_tree$tip.label, learn = learn.clds, size = ifelse(learn.clds == "", 0.1, 3), colors)  
+
+p <- ggtree(prum_tree, ladderize = FALSE, color = cols[4], lwd = 0.8) + geom_tiplab(hjust = 0, offset = 0.7, color = colors)
+
+p <- ggtree::rotate(p, 56)
+p <- p %<+% annt + 
+  # geom_cladelabel(node = hjust = 0, offset = 0.1, aes(color = learn)) + 
+  theme(legend.position="none") +
+  geom_tippoint(aes(shape = learn, color = learn, size = size)) + 
+  scale_shape_manual(values = c("\u2605", "\u25CF"), guide = FALSE)  +
+  scale_color_manual(values = c("gray", cols[8])) +
+  xlim(NA, 50)
+
+edge <- data.frame(prum_tree$edge, edge_num=1:nrow(prum_tree$edge))
+colnames(edge)=c("parent", "node", "edge_num")
+edge <- edge[edge$node == 56, , drop = FALSE]
+edge$edge_num <- "Passeriformes"
+p 
+
+ggsave(filename = "./images/learning.evo.orders.black.jpg", dpi = 300, scale = 1.2, height = 4.5, width = 5)
+
+
+```
+
+```{r phylogenetic signal, eval = FALSE, echo = FALSE}
+
+trait3 <- as.data.frame(trait)
+trait3$species <- rownames(trait)
+
+aggtrait2 <- aggtrait <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ species, trait3, mean)
+
+nrow(aggtrait)
+  
+rownames(aggtrait) <- aggtrait$species
+
+
+aggtrait$species <- NULL
+aggtrait <- scale(aggtrait)
+
+colnames(aggtrait) <- c("Element types", "Sequence complexity", "Acoustic space", "Between song variation")
+
+circ <- ggtree(phy, layout = "circular")
+
+gheatmap(circ, aggtrait, offset=.8, width=.5,low = "yellow", high = "red", colnames_angle=90, colnames_offset_y = 330,  colnames_offset_x = 0, hjust = 1) 
+
+aggtrait <- aggtrait[match(rownames(aggtrait), phy$tip.label),]
+
+# multivariate phylo sig
+mps <- physignal(aggtrait, phy,iter = 10000)
+
+# univariate phylo sig
+out <- lapply(colnames(aggtrait), function(x){ 
+  ps <- phylosig(phy, aggtrait[, x], test = TRUE, method = "lambda")
+  ps2 <-  phylosig(phy, aggtrait[, x], test = TRUE, method = "K") 
+  
+  data.frame(param = x,   as.data.frame(ps), as.data.frame(ps2))
+    }
+)
+
+ups <- do.call(rbind, out)
+
+inv.phylo <- inverseA(phy, nodes = "TIPS", scale = TRUE) #invertir la filogenia
+
+#tarda un par de minutos:
+m1 <- MCMCglmm(elm.types ~ 1, random = ~species, ginverse=list(species = inv.phylo$Ainv), pr = TRUE,
+               family ="gaussian", data = aggtrait2, nitt = 10000, burnin = 1000, thin = 100, verbose = FALSE)
+
+#diagnostiquemos una sola iteracion del modelo  
+plot(m1) 
+autocorr.plot(m1$VCV)
+
+# #Para diagnosticar convergencia repitamos el mismo modelo
+# m1b <- MCMCglmm(elm.types ~ 1, random = ~species, ginverse=list(species = inv.phylo$Ainv), pr = TRUE,
+#                family ="gaussian", data = trait3, prior = p1, nitt = 10000, burnin = 1000, thin = 100, verbose = FALSE)
+# 
+# m1c <- MCMCglmm(elm.types ~ 1, random = ~species, ginverse=list(species = inv.phylo$Ainv), pr = TRUE,
+#                family ="gaussian", data = trait3, prior = p1, nitt = 10000, burnin = 1000, thin = 100, verbose = FALSE)
+# 
+# plot(mcmc.list(m1$VCV,m1b$V,m1c$VCV))
+# 
+# gelman.diag(mcmc.list(m1$Sol,m1b$Sol,m1c$Sol))
+# gelman.diag(mcmc.list(m1$VCV,m1b$VCV,m1c$VCV))
+
+mean(m1$Sol[, '(Intercept)'])
+mean(aggtrait2$elm.types)
+###----que le sugiere la comparaci'on de esto dos valores?-----
+
+#Estimamos la heredabilidad filogen'etica
+m1PhyloSig <- m1$VCV[,'species']/(m1$VCV[,'species']+m1$VCV[,'units'])
+
+plot(m1PhyloSig)
+
+posterior.mode(m1PhyloSig)
+
+HPDinterval(m1PhyloSig)
+###----que puede decir acerca de la varianza filogen'etica?-----
+
+elm.types <- setNames(trait3$elm.types, trait3$species)
+phylosig(phy, elm.types, method = "K", nsim = 100, test = T)
+phylosig(phy, elm.types, method = "lambda", nsim = 100, test = T)
+
+trait3$indivs <- 1:nrow(trait3)
+
+#### phylo sig vs within species variation
+m5 <- MCMCglmm(elm.types ~ 1, random = ~ species + indivs, ginverse=list(species = inv.phylo$Ainv), pr = TRUE,
+               family ="gaussian", data = trait3, nitt = 10000, burnin = 1000, thin = 100, verbose = FALSE)
+
+m5PhyloSig<-m5$VCV[,'species']/
+  ((m5$VCV[,'species'] + m5$VCV[,'indivs'] + m5$VCV[,'units']) + pi^2/3)
+posterior.mode(m5PhyloSig)
+HPDinterval(m5PhyloSig)
+
+m5SpHet<-m5$VCV[,'indivs']/
+  ((m5$VCV[,'species'] + m5$VCV[,'indivs'] + m5$VCV[,'units']) + pi^2/3)
+posterior.mode(m5SpHet)
+HPDinterval(m5SpHet)
+
+est5 <- c(m5PhyloSig,m5SpHet)
+loc5 <- rep(c( "filogenetica", "dentro de spp"), each = nrow(m5$Sol))
+post5 <- data.frame(loc5,est5)
+
+ggplot(data = post5, aes(x = est5, color = loc5, fill = loc5)) + 
+  geom_histogram(bins =50, position = "identity", alpha = 0.2)+
+  labs(x= "% de la varianza explicada", y = "frequencia posterior", color = "tipo de varianza", fill = "tipo de varianza")+
+  theme(legend.position="top") + theme_classic()
+
+
+```
+
+```{r label clades, eval = TRUE, echo = FALSE}
+
+##### plot phylo with clades
+clds <- unique(sp$Clade)
+clds <- clds[clds != "Patagona"]
+# which(phy$tip.label == "Patagona_gigas")
+
+os <- c(6, 11, 6, 7, 3, 4, 4, 10, 7, 5)
+
+mrcas <- sapply(clds, function(i) findMRCA(phy, tips = sp$species[sp$Clade == i]))
+
+df.clds <- data.frame(clds, mrca = mrcas, offset = os, cols = viridis(10), stringsAsFactors = FALSE)
+
+p2 <- ggtree(phy, layout = "fan")
+
+for(i in 1:nrow(df.clds))
+p2 <- p2 + geom_cladelabel(node = df.clds$mrca[i], label = df.clds$clds[i], align=T, color= df.clds$cols[i], offset.text = df.clds$offset[i], hjust = 0.5) 
+
+grp <- split(sp2$species, sp2$Clade)
+
+grp <- grp[names(grp) %in% clds]
+
+grp <- grp[match(df.clds$clds, names(grp))]
+
+p2 <- p2 +
+  theme(
+    panel.background = element_rect(fill = "transparent"), # bg of the panel
+    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+    panel.grid.major = element_blank(), # get rid of major grid
+    panel.grid.minor = element_blank(), # get rid of minor grid
+    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
+  )
+
+
+groupOTU(p2, grp, 'clade') + aes(color = clade) +
+    theme(legend.position="none") + scale_color_manual(values = c( "gray", df.clds$cols[order(df.clds$clds)]))
+
+# ggsave(filename = "./images/tree_hummer_swfit_nightjars_clades.png", dpi = 300, scale = 1.2, height = 4.5, width = 5, bg = "transparent")
+
+
+##### hummingbirds in green
+df.clds <- data.frame(clds, mrca = sapply(clds, function(i) findMRCA(phy, tips = sp$species[sp$Clade == i])), offset = os, cols = viridis(10), stringsAsFactors = FALSE)
+
+df.clds$cols <- ifelse(df.clds$clds %in% c("Swifts","Nightjars"), h.s.cols[2], h.s.cols[1])
+p2 <- ggtree(phy, layout = "fan")
+
+for(i in 1:nrow(df.clds))
+p2 <- p2 + geom_cladelabel(node = df.clds$mrca[i], label = df.clds$clds[i], align=T, color= df.clds$cols[i], offset.text = df.clds$offset[i], hjust = 0.5) 
+
+grp <- split(sp2$species, sp2$Clade)
+
+grp <- grp[names(grp) %in% clds]
+
+grp <- grp[match(df.clds$clds, names(grp))]
+
+p2 <- p2 +
+  theme(
+    panel.background = element_rect(fill = "transparent"), # bg of the panel
+    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+    panel.grid.major = element_blank(), # get rid of major grid
+    panel.grid.minor = element_blank(), # get rid of minor grid
+    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
+  )
+
+# grp <- grp[9:1]
+# length(grp)
+# names(grp)
+groupOTU(p2, grp, 'clade') + aes(color = clade) +
+    theme(legend.position="none") + scale_color_manual(values = c( "gray", df.clds$cols[order(df.clds$clds)]))
+
+# ggsave(filename = "./images/tree_hummer_swift_nightjar_clades_2_colors.png", dpi = 300, scale = 1.2, height = 4.5, width = 5, bg = "transparent")
+
+
+#################
+# without swifts (in white)
+
+df.clds <- data.frame(clds, mrca = sapply(clds, function(i) findMRCA(phy, tips = sp$species[sp$Clade == i])), offset = os, cols = viridis(10), stringsAsFactors = FALSE)
+
+df.clds2 <- df.clds[!df.clds$clds %in% c("Swifts","Nightjars"), ]
+
+p2 <- ggtree(phy, layout = "fan")
+
+for(i in 1:nrow(df.clds2))
+p2 <- p2 + geom_cladelabel(node = df.clds2$mrca[i], label = df.clds2$clds[i], align=T, color= df.clds2$cols[i], offset.text = df.clds2$offset[i], hjust = 0.5) 
+
+grp <- split(sp2$species, sp2$Clade)
+
+grp <- grp[names(grp) %in% clds]
+
+grp <- grp[match(df.clds$clds, names(grp))]
+
+p2 <- p2 +
+  theme(
+    panel.background = element_rect(fill = "transparent"), # bg of the panel
+    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+    panel.grid.major = element_blank(), # get rid of major grid
+    panel.grid.minor = element_blank(), # get rid of minor grid
+    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
+  )
+
+clsX <- df.clds$cols[order(df.clds$clds)]
+clsX[8] <- "white"
+clsX[9] <- "white"
+
+# grp <- grp[9:1]
+length(grp)
+names(grp)
+groupOTU(p2, grp, 'clade') + aes(color = clade) +
+    theme(legend.position="none") + scale_color_manual(values = c( "gray", clsX))
+
+ggsave(filename = "./images/tree_hummer_clades.png", dpi = 300, scale = 1.2, height = 4.5, width = 5, bg = "transparent")
+
+
+```
+
+# Ratematrix results
+```{r run ratematrix analysis with SIMMAP accounting for phylogenetic uncertainty, eval = FALSE, echo = FALSE}
+
+phys <- readRDS("simmap.hmm.swfits.nightjars.rds")
+
+if (sum(!sp$species %in% phys[[1]]$tip.label) > 0)
+phys <- drop.tip(phys, tip = unique(sp$species[!sp$species %in% phys[[1]]$tip.label]))
+
+
+
+out <- pblapply(1:3, cl = 3, function(x){
+  handle <- ratematrixPolytopeMCMC(data = trait.list[names(trait.list) %in% phys[[1]]$tip.label], phy = phys[[x]],
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 50000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 40, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "hummer-swift_polytome_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+  })
+
+## Here we set the move of branch specific rates to 0.
+handle <- ratematrixPolytopeMCMC(data = trait.list[names(trait.list) %in% phys[[1]]$tip.label], phy = phys[[1]],
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "hummer-swift_polytome_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+handle <- ratematrixPolytopeMCMC(data = trait.list[names(trait.list) %in% phy.hmm$tip.label], phy = phy.hmm,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "hummer-swift_polytome_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+handle <- ratematrixPolytopeMCMC(data = trait.list[names(trait.list) %in% phy.hmm$tip.label], phy = phy.hmm,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "new_hummer_polytope_homo_rates_phylo_uncertain", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+```
+
+```{r run ratematrix analysis hummers with phylogenetic uncertainty, eval = FALSE, echo = FALSE}
+
+
+# run ratematrix using a different tree at the time
+out <- pblapply(phys.hmm, cl = 3, function(x){
+  
+handle <- ratematrixPolytopeMCMC(data = trait.list[names(trait.list) %in% phy$tip.label], phy = x,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 100000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 40, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "new_hummer_polytope_homo_rates_phylo_uncertain/", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+})
+
+## combine chains
+
+cmts <- list.files(path = "./new_hummer_polytope_homo_rates_phylo_uncertain/", pattern = "mcmc$", full.names = TRUE)
+
+cmts <- lapply(cmts, read.csv, sep = ";" )
+
+corr_mat <- do.call(rbind, cmts)
+
+corr_mat <- corr_mat[complete.cases(corr_mat), ]
+
+write.csv(corr_mat, "./new_hummer_polytope_homo_rates_phylo_uncertain/ratematrixPolyMCMC.corr.mat.csv", row.names = FALSE)
+
+## Read the standard deviations (here is just a single vector).
+
+
+sd_mats <- lapply(sd_mats, read.csv, sep = ";" )
+
+sd_mat_raw <- do.call(rbind, sd_mats)
+
+sd_mat_raw <- sd_mat_raw[complete.cases(sd_mat_raw), ]
+
+sd_mat <- sd_mat_raw[,1:4]
+
+
+corr_list <- list()
+
+for( i in 1:nrow(corr_mat) ){
+    corr_list[[i]] <- cov2cor( matrix(data = as.numeric(corr_mat[i,]), nrow = 4, ncol = 4, byrow = FALSE) )
+}
+
+## Make the rate matrix list:
+rate_list <- list()
+for( i in 1:nrow(corr_mat) ){
+    rate_list[[i]] <- diag(as.numeric(sd_mat[i,])) %*% corr_list[[i]] %*% diag(as.numeric(sd_mat[i,]))
+}
+
+## make the list in the correct format for plotRatematrix.
+chain <- list()
+chain$n_post_samples <- nrow(corr_mat)
+chain$matrix <- rate_list ## List with the rate matrices.
+chain$trait_names <- c("Element types","Sequence complexity","Acoustic space", "btwn.song.var.IMP") ## Names of the traits.
+chain$root  <- NA ## Matrix with the root values. Maybe can be NULL
+class(chain) <- "ratematrix_chain" ## Should work.
+
+saveRDS(chain, "Ratematrix phylogenetic uncertainty hummingbirds.RDS")
+
+```
+
+```{r run ratematrix analysis hummers rarefaction equal taxa proportion, eval = FALSE, echo = FALSE}
+
+# phy <- read.tree("100_trees_31_swift_species_birdtree.trees")
+phy <- read.tree("consensus_tree_swifts_hummingbirds_and_nighjars_max_cred.tree")
+
+# read original data
+data.file <- read.csv("All songs complexity parameters nightjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+# number of species for each main clade
+n.swft.sp <- length(unique(sp$species[sp$Clade == "Swifts"]))
+
+# get species in data and phylo
+hmm.sp <- unique(rownames(trait.no.imp))[unique(rownames(trait.no.imp)) %in% sp$species[sp$Clade != "Swifts"]]
+
+# sample to remove
+n.smp <- round((1 - (n.swft.sp / 112)) * length(hmm.sp))
+
+hmm.sp <- hmm.sp[hmm.sp %in% phy.hmm$tip.label]
+
+# get random samples of 31 species for hummers
+out <- pbreplicate(n = 100, cl = 3, expr = {
+  
+  smp.rmv <- c(unique(sp$species[sp$Clade == "Swifts"]), sample(hmm.sp, n.smp))
+
+  trait.list.pruned <- trait.list[!names(trait.list) %in% smp.rmv]
+
+  phy.hmm.rare <- drop.tip(phy.hmm, tip = phy.hmm$tip.label[!phy.hmm$tip.label %in% names(trait.list.pruned)])
+
+## Here we set the move of branch specific rates to 0.
+handle <- ratematrixPolytopeMCMC(data = trait.list.pruned, phy = phy.hmm.rare,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "rarefact_hummer_polytope_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+ })
+
+
+```
+
+```{r run ratematrix analysis swifts,  eval = FALSE, echo = FALSE}
+
+# phy <- read.tree("100_trees_31_swift_species_birdtree.trees")
+phy <- read.tree("consensus_tree_swifts_and_hummingbirds_max_cred.tree")
+
+trait.list <- split(as.data.frame(trait), f = rownames(trait))
+
+trait.list <- sapply(trait.list, as.matrix)
+trait.list <- sapply(trait.list, function(x) {
+  rownames(x) <- NULL
+  return(x)}
+  )
+
+# keep only swifts
+phy.swft <- drop.tip(phy, tip = unique(sp$species[sp$Clade != "Swifts"]))
+keep <- names(trait.list) %in% phy.swft$tip.label
+trait.list.pruned <- trait.list[keep]
+
+handle <- ratematrixPolytopeMCMC(data = trait.list.pruned, phy = phy.swft,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 40, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "new_swift_polytope_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+## Here we set the move of branch specific rates to 0.
+handle <- ratematrixPolytopeMCMC(data = trait.list.pruned, phy = phy.swft,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "new_swift_polytope_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+handle <- ratematrixPolytopeMCMC(data = trait.list.pruned, phy = phy.swft,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "new_swift_polytope_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+handle <- ratematrixPolytopeMCMC(data = trait.list.pruned, phy = phy.swft,
+                                 sample_internal = FALSE, rate_variation = TRUE,
+                                 gen = 5000000, max_branch_update = 0.5,
+                                 burn = 0.5, thin = 400, w_sd = 0.2, w_branch_sd = 0.2,
+                                 dir = "new_swift_polytope_homo_rates", n_tips_move = 1,
+                                 prop_par = c(0.2, 0.2, 0.2, 0.0),
+                                 save.handle = TRUE, verbose = FALSE)
+
+
+```
+
+## Hummingbirds
+```{r Ratematrix results hummingbirds, eval = TRUE, echo= FALSE, message=FALSE, warning=FALSE}
+## Check the results for the evolutionary rate matrix for the Hummingbirds.
+
+## To get the posterior distribution will be a little harder here.
+## Need to make a list of the ratematrices.
+
+## These are the attributes needed to plot the covariance matrices:
+## chain$n_post_samples
+## chain$matrix ## List with the rate matrices.
+## chain$trait_names ## Names of the traits.
+## chain$root ## Matrix with the root values. Maybe can be NULL
+## class( chain ) <- "ratematrix_chain" ## Should work.
+
+# handle <- readRDS("./new_hummer_polytope_homo_rates/ratematrixPolyMCMC.18326.mcmc.handle.rds")
+
+# length(handle$phy$tip.label)
+
+## Read the correlation matrices:
+corr_mat <- read.csv( file = "./new_hummer_polytope_homo_rates/ratematrixPolyMCMC.18326.mcmc", sep = ";" )
+
+corr_list <- list()
+
+for( i in 1:nrow(corr_mat) ){
+    corr_list[[i]] <- cov2cor( matrix(data = as.numeric(corr_mat[i,]), nrow = 4, ncol = 4, byrow = FALSE) )
+}
+## Read the standard deviations (here is just a single vector).
+sd_mat_raw <- read.csv( file = "./new_hummer_polytope_homo_rates/ratematrixPolyMCMC.18326.sd", sep = ";")
+sd_mat <- sd_mat_raw[,1:4]
+
+## Make the rate matrix list:
+rate_list <- list()
+for( i in 1:nrow(corr_mat) ){
+    rate_list[[i]] <- diag(as.numeric(sd_mat[i,])) %*% corr_list[[i]] %*% diag(as.numeric(sd_mat[i,]))
+}
+
+## make the list in the correct format for plotRatematrix.
+chain <- list()
+chain$n_post_samples <- nrow(corr_mat)
+chain$matrix <- rate_list ## List with the rate matrices.
+chain$trait_names <- c("Element types","Sequence complexity","Acoustic space", "btwn.song.var.IMP") ## Names of the traits.
+chain$root  <- NA ## Matrix with the root values. Maybe can be NULL
+class(chain) <- "ratematrix_chain" ## Should work.
+
+
+# jpeg("./images/ratematrix_hummingbirds_homo_rates_polytope.jpeg", res = 300,width = 440 * 3, height = 340  *3)
+
+# pdf( file = "ratematrix_hummingbirds_homo_rates_polytope.pdf" )
+plotRatematrix2(chain = chain, colors = h.s.cols[1], n.lines = 100, hpd = 95, show.zero = TRUE, alphaOff = 1, set.xlim = c(-0.03, 0.9), alphaEll = 0.9)
+# dev.off()
+
+```
+
+```{r plot phylogenetic uncertainty hummers, eval = TRUE, echo = FALSE}
+
+chain <- readRDS("Ratematrix phylogenetic uncertainty hummingbirds.RDS")
+
+plotRatematrix2(chain = chain, colors = h.s.cols[1], n.lines = 100, hpd = 95, show.zero = TRUE, alphaOff = 1, set.xlim = c(-0.03, 0.7), alphaEll = 0.9)
+# dev.off()
+
+# cors <- extractCorrelation(handle)
+# 
+# hist(sqrt(cors[,1] - cors[, 2]))
+# 
+# sum(sqrt(cors[,1] - cors[, 2]) > 0)
+# 
+# hist(cors[,1])
+# hist(cors[,2])
+
+
+```
+
+
+### Rarefacted test
+```{r Ratematrix results hummingbirds rarefaction, eval = FALSE, echo= FALSE, message=FALSE, warning=FALSE}
+## Check the results for the evolutionary rate matrix for the Hummingbirds.
+
+## To get the posterior distribution will be a little harder here.
+## Need to make a list of the ratematrices.
+
+## These are the attributes needed to plot the covariance matrices:
+## chain$n_post_samples
+## chain$matrix ## List with the rate matrices.
+## chain$trait_names ## Names of the traits.
+## chain$root ## Matrix with the root values. Maybe can be NULL
+## class( chain ) <- "ratematrix_chain" ## Should work.
+
+# hndls <- list.files(path = "./rarefact_hummer_polytope_homo_rates/", pattern = "mcmc.handle.rds", full.names = TRUE)
+# 
+# hndls <- lapply(hndls, readRDS)
+# hndls <- lapply(hndls, readMCMC)
+# 
+# handle <- mergePosterior(hndls)
+
+# plotRatematrix2(handle)
+
+
+# handle <- readRDS("./new_hummer_polytope_homo_rates/ratematrixPolyMCMC.18326.mcmc.handle.rds")
+
+# length(handle$phy$tip.label)
+
+## Read the correlation matrices:
+
+cmts <- list.files(path = "./rarefact_hummer_polytope_homo_rates/", pattern = "mcmc$", full.names = TRUE)
+
+cmts <- lapply(cmts, read.csv, sep = ";" )
+
+corr_mat <- do.call(rbind, cmts)
+
+corr_mat <- corr_mat[complete.cases(corr_mat), ]
+
+write.csv(corr_mat, "./rarefact_hummer_polytope_homo_rates/ratematrixPolyMCMC.corr.mat.csv", row.names = FALSE)
+
+## Read the standard deviations (here is just a single vector).
+sd_mats <- list.files(path = "./rarefact_hummer_polytope_homo_rates/", pattern = ".sd$", full.names = TRUE)
+
+
+sd_mats <- lapply(sd_mats, read.csv, sep = ";" )
+
+sd_mat_raw <- do.call(rbind, sd_mats)
+
+sd_mat_raw <- sd_mat_raw[complete.cases(sd_mat_raw), ]
+
+sd_mat <- sd_mat_raw[,1:4]
+
+write.csv(sd_mat, "./rarefact_hummer_polytope_homo_rates/ratematrixPolyMCMC.sd.mat.csv", row.names = FALSE)
+
+```
+
+```{r Ratematrix results hummingbirds rarefaction plot, eval = FALSE, echo= FALSE, message=FALSE, warning=FALSE}
+
+corr_mat <- read.csv("./rarefact_hummer_polytope_homo_rates/ratematrixPolyMCMC.corr.mat.csv", stringsAsFactors = FALSE)
+
+sd_mat <- read.csv("./rarefact_hummer_polytope_homo_rates/ratematrixPolyMCMC.sd.mat.csv", stringsAsFactors = FALSE)
+
+
+corr_list <- list()
+
+for( i in 1:nrow(corr_mat) ){
+    corr_list[[i]] <- cov2cor( matrix(data = as.numeric(corr_mat[i,]), nrow = 4, ncol = 4, byrow = FALSE) )
+}
+
+## Make the rate matrix list:
+rate_list <- list()
+for( i in 1:nrow(corr_mat) ){
+    rate_list[[i]] <- diag(as.numeric(sd_mat[i,])) %*% corr_list[[i]] %*% diag(as.numeric(sd_mat[i,]))
+}
+
+## make the list in the correct format for plotRatematrix.
+chain <- list()
+chain$n_post_samples <- nrow(corr_mat)
+chain$matrix <- rate_list ## List with the rate matrices.
+chain$trait_names <- c("Element types","Sequence complexity","Acoustic space", "btwn.song.var.IMP") ## Names of the traits.
+chain$root  <- NA ## Matrix with the root values. Maybe can be NULL
+class(chain) <- "ratematrix_chain" ## Should work.
+
+# jpeg("./images/ratematrix_hummingbirds_homo_rates_polytope.jpeg", res = 300,width = 440 * 3, height = 340  *3)
+
+saveRDS(chain, "Ratematrix rarefacted hummingbirds.RDS")
+
+```
+
+```{r plot rarefacted, eval = TRUE, echo = FALSE}
+
+chain <- readRDS("Ratematrix rarefacted hummingbirds.RDS")
+
+plotRatematrix2(chain = chain, colors = h.s.cols[1], n.lines = 100, hpd = 99, show.zero = TRUE, alphaOff = 1, set.xlim = c(-0.03, 0.35), alphaEll = 0.9)
+# dev.off()
+
+# cors <- extractCorrelation(handle)
+# 
+# hist(sqrt(cors[,1] - cors[, 2]))
+# 
+# sum(sqrt(cors[,1] - cors[, 2]) > 0)
+# 
+# hist(cors[,1])
+# hist(cors[,2])
+
+
+```
+
+
+## Swifts
+```{r Ratematrix results swifts, eval = TRUE, echo= FALSE, message=FALSE, warning=FALSE}
+
+## Check the results for the evolutionary rate matrix for the Hummingbirds.
+
+## To get the posterior distribution will be a little harder here.
+## Need to make a list of the ratematrices.
+
+## These are the attributes needed to plot the covariance matrices:
+## chain$n_post_samples
+## chain$matrix ## List with the rate matrices.
+## chain$trait_names ## Names of the traits.
+## chain$root ## Matrix with the root values. Maybe can be NULL
+## class( chain ) <- "ratematrix_chain" ## Should work.
+
+# handle <- readRDS("./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.25944.mcmc.handle.rds")
+
+# handle <- readRDS("./new_swift_polytope_homo_rates/ratematrixPolyMCMC.51397.mcmc.handle.rds")
+# length( handle$phy$tip.label )
+
+## Read the correlation matrices:
+corr_mat1 <- read.csv( file = "./new_swift_polytope_homo_rates/ratematrixPolyMCMC.51397.mcmc", sep = ";" )
+corr_mat2 <- read.csv( file = "./new_swift_polytope_homo_rates/ratematrixPolyMCMC.57936.mcmc", sep = ";" )
+
+corr_list1 <- list()
+for( i in 1:nrow(corr_mat1) ){
+    corr_list1[[i]] <- cov2cor( matrix(data = as.numeric(corr_mat1[i,]), nrow = 4, ncol = 4, byrow = FALSE) )
+}
+corr_list2 <- list()
+for( i in 1:nrow(corr_mat2) ){
+    corr_list2[[i]] <- cov2cor( matrix(data = as.numeric(corr_mat2[i,]), nrow = 4, ncol = 4, byrow = FALSE) )
+}
+
+## Read the standard deviations (here is just a single vector).
+sd_mat_raw1 <- read.csv( file = "./new_swift_polytope_homo_rates/ratematrixPolyMCMC.51397.sd", sep = ";")
+sd_mat1 <- sd_mat_raw1[,1:4]
+sd_mat_raw2 <- read.csv( file = "./new_swift_polytope_homo_rates/ratematrixPolyMCMC.57936.sd", sep = ";")
+sd_mat2 <- sd_mat_raw2[,1:4]
+## Make the rate matrix list:
+rate_list1 <- list()
+for( i in 1:nrow(corr_mat1) ){
+    rate_list1[[i]] <- diag(as.numeric(sd_mat1[i,])) %*% corr_list1[[i]] %*% diag(as.numeric(sd_mat1[i,]))
+}
+rate_list2 <- list()
+for( i in 1:nrow(corr_mat2) ){
+    rate_list2[[i]] <- diag(as.numeric(sd_mat2[i,])) %*% corr_list2[[i]] %*% diag(as.numeric(sd_mat2[i,]))
+}
+rate_list <- c(rate_list1, rate_list2)
+
+## make the list in the correct format for plotRatematrix.
+chain <- list()
+chain$n_post_samples <- length( rate_list )
+chain$matrix <- rate_list ## List with the rate matrices.
+chain$trait_names <- c("Element types","Sequence complexity","Acoustic space", "btwn.song.var.IMP") ## Names of the traits.
+chain$root  <- NA ## Matrix with the root values. Maybe can be NULL
+class( chain ) <- "ratematrix_chain" ## Should work.
+
+# jpeg("./images/ratematrix_swift_homo_rates_polytope.jpeg", res = 300,width = 440 * 3, height = 340  *3)
+
+plotRatematrix2(chain = chain, colors = h.s.cols[2], n.lines = 100, hpd = 95, show.zero = TRUE, alphaOff = 1, set.xlim = c(-0.03, 0.4), alphaEll = 0.9)
+
+# dev.off()
+
+```
+
+
+## Complexity evolution through epochs
+
+```{r eval = FALSE, echo = FALSE}
+## The results from the ancestral volumes estimated are a little weird.
+## Here we will try to make plots of the ancestral estimated values directly.
+## Difference is that here we are not going to be using the algorithm that tries to estimate the volumes.
+
+## Get the phylogenies:
+handle_humm <- readRDS( "./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.21614.mcmc.handle.rds" )
+handle_swift <- readRDS( "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.25944.mcmc.handle.rds" )
+phy_humm <- handle_humm$phy
+phy_swift <- handle_swift$phy
+
+## Note that here the age of the nodes is with respect to the present.
+## Node height of 0 means present.
+
+depth_nodes_humm <- node.depth.edgelength( phy = phy_humm )
+height_nodes_humm <- ( depth_nodes_humm - max( depth_nodes_humm ) ) * -1
+humm_table <- cbind(1:length(height_nodes_humm), height_nodes_humm)
+
+depth_nodes_swift <- node.depth.edgelength( phy = phy_swift )
+height_nodes_swift <- ( depth_nodes_swift - max( depth_nodes_swift ) ) * -1
+swift_table <- cbind(1:length(height_nodes_swift), height_nodes_swift)
+
+## Need to correct the tables because of numerical errors.
+ntips_humm <- length( phy_humm$tip.label )
+humm_table[1:ntips_humm,2] <- 0.0
+ntips_swift <- length( phy_swift$tip.label )
+swift_table[1:ntips_swift,2] <- 0.0
+range( swift_table[,2] )
+
+## Define the time epochs that we will compare.
+## Group the nodes inside the epoch per clade.
+n_chunks <- 20
+epochs <- seq(from = 0, to = 50, length.out = n_chunks+1)
+plot( epochs ) ## The epochs are divided in the log scale.
+
+count_nodes <- matrix(nrow = n_chunks, ncol = 2)
+colnames( count_nodes ) <- c("swift", "humm")
+for( i in 2:(n_chunks+1) ){
+    swift <- sum( sapply(swift_table[,2], function(x) epochs[i-1] < x & x < epochs[i] ) )
+    hum <- sum( sapply(humm_table[,2], function(x) epochs[i-1] < x & x < epochs[i] ) )
+    count_nodes[i-1,1] <- swift
+    count_nodes[i-1,2] <- hum
+}
+count_nodes <- cbind(epoch = epochs[1:n_chunks], count_nodes)
+
+## We can make about 9 comparisons based on the nodes and another based on the tip values.
+count_nodes
+
+## Get the ancestral volumes per clade per epoch.
+epoch_nodes_swift <- list()
+epoch_nodes_humm <- list()
+for( i in 2:(n_chunks+1) ){
+    swift_id <- epochs[i-1] < swift_table[,2] & swift_table[,2] < epochs[i]
+    epoch_nodes_swift[[i-1]] <- swift_table[swift_id,1]
+    humm_id <- epochs[i-1] < humm_table[,2] & humm_table[,2] < epochs[i]
+    epoch_nodes_humm[[i-1]] <- humm_table[humm_id,1]
+}
+
+ll_swift <- sapply(epoch_nodes_swift, length)
+ll_humm <- sapply(epoch_nodes_humm, length)
+## Just checking if the number of nodes per category we get here are correct.
+cbind( ll_swift, ll_humm )
+
+## Choose the nodes and start the estimates of the ancestral volumes.
+keep <- 1:9
+
+## Get the ancestral estimates for each of the groups.
+library( ratematrix )
+library( hypervolume )
+
+handle_humm <- readRDS( "./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.21614.mcmc.handle.rds" )
+mcmc_humm <- readMCMC( handle = handle_humm, dir = "./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results", thin = 10)
+phy_humm <- handle_humm$phy
+anc_humm <- sampleAncestralStates( phy = phy_humm, mcmc = mcmc_humm )
+class( anc_humm )
+dim( anc_humm )
+
+handle_swift <- readRDS( "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.25944.mcmc.handle.rds" )
+mcmc_swift <- readMCMC( handle = handle_swift, dir = "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results", thin = 10)
+phy_swift <- handle_swift$phy
+anc_swift <- sampleAncestralStates( phy = phy_swift, mcmc = mcmc_swift )
+```
+
+```{r make animation using points, eval = FALSE, echo = FALSE}
+
+pch = 20
+h.s.cols.t2 <- c(viridis(8, alpha = 0.2)[7], viridis(5,alpha = 0.2)[3])
+epochs <- 9
+
+samples <- lapply(1:epochs, function(i){
+  
+  nodes_humm <- epoch_nodes_humm[[i]]
+  node_pos <- sapply(nodes_humm, function(x) which(x == as.numeric(colnames(anc_humm[,,1]) ) ) )
+  samples_humm <- anc_humm[,node_pos,]
+  samples_humm <- apply(samples_humm, 1, c)
+  colnames( samples_humm ) <- c("elm.types", "sq.complx", "acous.spc")
+  hmm.dt <- data.frame(epoch = i, clade = "hummingbirds", samples_humm)
+  
+  nodes_swifts <- epoch_nodes_swift[[i]]
+  node_pos <- sapply(nodes_swifts, function(x) which(x == as.numeric(colnames(anc_swift[,,1]) ) ) )
+  samples_swifts <- anc_swift[,node_pos,]
+  samples_swifts <- apply(samples_swifts, 1, c)
+  colnames( samples_swifts ) <- c("elm.types", "sq.complx", "acous.spc")
+  
+  swf.dt <- data.frame(epoch = i, clade = "swifts", samples_swifts)
+  
+  reslts <- rbind(hmm.dt, swf.dt)
+  return(reslts)
+})
+
+# save gif
+saveGIF(
+  # loop over different number of time windows
+  ##plot evolution through epochs
+  out <- pblapply(samples, function(X){
+    
+    par( mfrow = c(1,3))
+    
+    
+cmbs <- combn(c("elm.types", "sq.complx", "acous.spc"), m = 2)
+    
+  for(e in 1:ncol(cmbs)){
+    
+    # set axis limits
+    if(cmbs[1, e] == "elm.types") 
+      xlim <- c(-50, 50) else xlim <- c(-30, 50)
+    if(cmbs[2, e] == "sq.complx") 
+      ylim <- c(-20, 40) else ylim <- c(-60, 40)
+    
+    #plot hummingbirds    
+    plot(X[X$clade == "hummingbirds", cmbs[1, e]], X[X$clade == "hummingbirds", cmbs[2, e]], pch = pch, col = h.s.cols.t2[1]
+         , xlab = cmbs[1, e], ylab = cmbs[2, e], xlim = xlim, ylim = ylim)
+    # add swifts
+    points(X[X$clade == "swifts", cmbs[1, e]], X[X$clade == "swifts", cmbs[2, e]], pch = pch, col = h.s.cols.t2[2])
+    
+    if(e == 2)
+      title(paste("Epoch", X$epoch[1]))
+  }  
+    
+    #     
+    #       library(spatstat)
+    #   library(raster)
+    #   library(adehabitatHR)  
+    #    usr <-  par("usr")
+    #    acou.space <- mcp(SpatialPoints(coords = samples_swifts[, c(1, 2)]))
+    # acou.space <- attributes(acou.space@polygons[[1]]@Polygons[[1]])$coords
+    # 
+    # acu.sp.sp <- spPolygons(acou.space[, 1:2])
+    #    
+    #   pp.coords.post <- as.ppp(as.matrix(samples_swifts[, c(1, 2)]), usr)
+    #   r.coords.post <- raster(density.ppp(pp.coords.post))
+    # 
+    #   msk.post <- mask(r.coords.post, acu.sp.sp)
+    # 
+    #     image(r.coords.post, add = T, col= viridis(10))
+    # image(msk.post, add = T, col= h.s.cols.t2[1])
+      }) ,movie.name =  "filling.of.complexity space.gif", interval = 0.8, ani.height = 480 , ani.width = 900, res = 120)
+
+
+```
+
+```{r make animation using density plots, eval = FALSE, echo = FALSE}
+epochs <- 9
+samples <- lapply(1:epochs, function(i){
+  
+  nodes_humm <- epoch_nodes_humm[[i]]
+  node_pos <- sapply(nodes_humm, function(x) which(x == as.numeric(colnames(anc_humm[,,1]) ) ) )
+  samples_humm <- anc_humm[,node_pos,]
+  samples_humm <- apply(samples_humm, 1, c)
+  colnames( samples_humm ) <- c("elm.types", "sq.complx", "acous.spc")
+  hmm.dt <- data.frame(epoch = i, clade = "hummingbirds", samples_humm)
+  
+  nodes_swifts <- epoch_nodes_swift[[i]]
+  node_pos <- sapply(nodes_swifts, function(x) which(x == as.numeric(colnames(anc_swift[,,1]) ) ) )
+  samples_swifts <- anc_swift[,node_pos,]
+  samples_swifts <- apply(samples_swifts, 1, c)
+  colnames( samples_swifts ) <- c("elm.types", "sq.complx", "acous.spc")
+  
+  swf.dt <- data.frame(epoch = i, clade = "swifts", samples_swifts)
+  
+  reslts <- rbind(hmm.dt, swf.dt)
+  return(reslts)
+})
+
+# save gif
+saveGIF(
+  # loop over different number of time windows
+  ##plot evolution through epochs
+  out <- pblapply(samples, function(X){
+    
+    par( mfrow = c(1,3))
+    
+    
+cmbs <- combn(c("elm.types", "sq.complx", "acous.spc"), m = 2)
+    
+  for(e in 1:ncol(cmbs)){
+    
+    # set axis limits
+    if(cmbs[1, e] == "elm.types") 
+      xlim <- c(-50, 50) else xlim <- c(-30, 50)
+    if(cmbs[2, e] == "sq.complx") 
+      ylim <- c(-20, 40) else ylim <- c(-60, 40)
+    
+    #plot empty graph
+      plot(X[, cmbs[1, e]], X[, cmbs[2, e]], pch = pch, col = "white"
+         , xlab = cmbs[1, e], ylab = cmbs[2, e], xlim = xlim, ylim = ylim)
+
+        if(e == 2)
+      title(paste("Epoch", X$epoch[1]))
+
+    # Hummingbirds  
+    usr <-  par("usr")
+    acou.space <- mcp(SpatialPoints(coords = X[X$clade == "hummingbirds", cmbs[, e]]))
+    acou.space <- attributes(acou.space@polygons[[1]]@Polygons[[1]])$coords
+    acu.sp.sp <- spPolygons(acou.space[, 1:2])
+    pp.coords.post <- as.ppp(as.matrix(X[X$clade == "hummingbirds", cmbs[, e]]), usr)
+    r.coords.post <- raster(density.ppp(pp.coords.post))
+    # msk.post <- mask(r.coords.post, acu.sp.sp)
+    image(r.coords.post, add = T, col= c( "white", rev(viridis(20))))
+    
+    # Swifts
+    acou.space <- mcp(SpatialPoints(coords = X[X$clade == "swifts", cmbs[, e]]))
+    acou.space <- attributes(acou.space@polygons[[1]]@Polygons[[1]])$coords
+    acu.sp.sp <- spPolygons(acou.space[, 1:2])
+    pp.coords.post <- as.ppp(as.matrix(X[X$clade == "swifts", cmbs[, e]]), usr)
+    r.coords.post <- raster(density.ppp(pp.coords.post))
+    # msk.post <- mask(r.coords.post, acu.sp.sp)
+    
+    image(r.coords.post, add = T, col= c( "white", rev(inferno(20, alpha = 0.1))))
+    
+    # image(msk.post, add = T, col=  "white")
+  
+  }  
+    }) ,movie.name =  "filling.of.complexity space density.gif", interval = 0.8, ani.height = 480 , ani.width = 900, res = 120)
+
+
+```
+
+
+ <center><img src="filling.of.complexity space.gif" alt="Sliding window"></center> 
+
+# OU models
+
+## Multivariate OU models
+
+### Hummingbirds vs Swifts
+
+4 models:
+
+1. Single regime multivariate OU model: nightjars, swifts and hummingbirds shared the same evolutionary regime
+
+1. Multivariate OU model 1 with 2 regimes: nightjars + swifts vs hummingbirds
+
+1. Multivariate OU model 2 with 2 regimes: nightjars vs swifts + hummingbirds
+
+1. Multivariate OU model 2 with 3 regimes: nightjars vs swifts vs hummingbirds
+
+These models test if the different clades show distinct modes of evolution for the clade. Here the test is multivariate. Meaning that we are taking into account the covariance between the traits:
+
+```{r, eval = FALSE, echo = FALSE}
+
+# check spcies in tree and data matches
+all(phy$tip.label %in% rownames(trait))
+all(rownames(trait) %in% phy$tip.label)
+
+# 1 regime model
+fit.ou1 <- mvOU(tree = phy, data = trait, model = "OU1", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS(fit.ou1, file = "fit_single_OU.rds")
+
+### 2 regimes 
+swift_tree <- read.tree("100_trees_31_swift_species_birdtree.trees")
+swift_spp <- swift_tree[[1]]$tip.label
+
+# create regime data
+phy_regime_data <- rep("humm", times = length( phy$tip.label ))
+names(phy_regime_data ) <- phy$tip.label
+
+phy_regime_data[ names( phy_regime_data ) %in% swift_spp ] <- "swift"
+
+# phy_regime_data
+phy.regimes <- phytools::make.simmap(tree = phy, x = phy_regime_data, model = "ARD", nsim = 1)
+
+cls <- viridis(2)
+names(cls) <- unique(phy_regime_data)
+
+plotSimmap(phy.regimes, fsize = -0.1, colors = cls, add = FALSE)
+
+# plot(phy, show.tip.label = FALSE, edge.color = cols[4]) #; axisPhylo()
+
+saveRDS(phy.regimes, file = "phy_simmap.rds")
+
+fit.ou2 <- mvOU(tree = phy.regimes, data = trait, model = "OUM", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS( fit.ou2, file = "fit.ou2.rds" )
+
+```
+
+```{r, eval = TRUE, echo = FALSE}
+## AICS  for models
+
+mod.1.regm <- readRDS("fit.ou1.rds")
+mod.2.regm <- readRDS("fit.ou2.rds")
+
+aics <- data.frame(model = c("1 regime", "2 regimes"), AIC = c(AIC(mod.1.regm), AIC(mod.2.regm)))
+
+aics$delta <- aics$AIC - min(aics$AIC)  
+
+aics <- aics[order(aics$delta), ]
+
+df1 <- knitr::kable(aics, row.names = FALSE, escape = FALSE, format = "html")
+
+df1 <- row_spec(df1, which(aics$delta== 0), background = adjustcolor(cols[9], alpha.f = 0.3))
+
+kable_styling(df1, bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = FALSE, font_size = 12)
+
+```
+
+Likelihood-ratio test:
+```{r, eval = TRUE, echo = TRUE}
+
+LRT(mod.2.regm, mod.1.regm)
+
+```
+
+### Different regimes for each clade (excluding Patagonas and Topazes)
+```{r, eval = FALSE, echo = FALSE, message=FALSE}
+
+df <- merge(data.frame(species = phy$tip.label), sp2, all.y = FALSE, sort = FALSE)
+
+# create regime data
+phy_regime_data_clade <- df$Clade
+names(phy_regime_data_clade) <- phy$tip.label
+
+# remove patagona and topazes
+phy.clds <- drop.tip(phy, tip = sp2$species[!sp2$Clade %in% trg.clds])
+
+phy_regime_data_clade <- phy_regime_data_clade[phy_regime_data_clade %in% trg.clds]
+
+table(phy_regime_data_clade)
+
+# 8 clades
+simmap_8_clades <- phytools::make.simmap(tree = phy.clds, x = phy_regime_data_clade, model = "ARD", nsim = 1)
+
+saveRDS(simmap_8_clades, file = "simmap_8_clades.rds")
+
+phy_regime_data_3_big_clades <- phy_regime_data_nightjars_vs_all <- phy_regime_data_hummers_vs_all <- phy_regime_data_clade
+
+
+# 2 clades hummers vs swifts + nighjars
+phy_regime_data_hummers_vs_all[!phy_regime_data_hummers_vs_all %in% c("Swift", "Nightjars")] <- "Hummingbirds"
+
+phy_regime_data_hummers_vs_all[phy_regime_data_hummers_vs_all %in% c("Swift", "Nightjars")] <- "No_hummingbirds"
+
+table(phy_regime_data_hummers_vs_all)
+
+simmap_hummers_vs_all <- phytools::make.simmap(tree = phy.clds, x = phy_regime_data_hummers_vs_all, model = "ARD", nsim = 1)
+
+saveRDS(simmap_hummers_vs_all, file = "simmap_hummers_vs_all.rds")
+
+
+# 2 clades nighjars vs swifts + hummers 
+phy_regime_data_nightjars_vs_all[!phy_regime_data_nightjars_vs_all %in% c("Nightjars")] <- "Hummers_and_swifts"
+
+table(phy_regime_data_nightjars_vs_all)
+
+simmap_nightjars_vs_all <- phytools::make.simmap(tree = phy.clds, x = phy_regime_data_nightjars_vs_all, model = "ARD", nsim = 1)
+
+saveRDS(simmap_nightjars_vs_all, file = "simmap_nightjars_vs_all.rds")
+
+
+# 3 clades nighjars vs swifts vs hummers 
+phy_regime_data_3_big_clades[!phy_regime_data_3_big_clades %in% c("Swift", "Nightjars")] <- "Hummingbirds"
+
+table(phy_regime_data_3_big_clades)
+
+simmap_data_3_big_clades <- phytools::make.simmap(tree = phy.clds, x = phy_regime_data_3_big_clades, model = "ARD", nsim = 1)
+
+saveRDS(simmap_data_3_big_clades, file = "simmap_data_3_big_clades.rds")
+
+```
+
+```{r 1 and several regime models, eval = FALSE, echo = FALSE}
+
+# 1 regime
+simmap_8_clades <- readRDS("simmap_8_clades.rds")
+
+ou_1_regime <- mvOU(tree = simmap_8_clades, 
+                data = trait[rownames(trait) %in% simmap_8_clades$tip.label, ]
+, 
+                model = "OU1", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS(ou_1_regime, file = "ou_1_regime.rds")
+
+
+# 8 clades
+ou_8_clades <- mvOU(tree = simmap_8_clades, 
+                data = trait[rownames(trait) %in% simmap_8_clades$tip.label, ]
+, 
+                model = "OUM", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS(ou_8_clades, file = "ou_8_clades.rds")
+
+
+# 2 clades hummers vs nighjars + swifts
+simmap_hummers_vs_all <- readRDS("simmap_hummers_vs_all.rds")
+
+ou_hummers_vs_all <- mvOU(tree = simmap_hummers_vs_all, 
+                data = trait[rownames(trait) %in% simmap_hummers_vs_all$tip.label, ]
+, 
+                model = "OUM", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS(ou_hummers_vs_all, file = "ou_hummers_vs_all.rds")
+
+
+# 2 clades nighjars vs swifts + hummers 
+simmap_nightjars_vs_all <- readRDS("simmap_nightjars_vs_all.rds")
+
+ou_nightjars_vs_all <- mvOU(tree = simmap_nightjars_vs_all, 
+                data = trait[rownames(trait) %in% simmap_nightjars_vs_all$tip.label, ]
+, 
+                model = "OUM", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS(ou_nightjars_vs_all, file = "ou_nightjars_vs_all.rds")
+
+
+# 3 clades nighjars vs swifts vs hummers 
+simmap_data_3_big_clades <- readRDS("simmap_data_3_big_clades.rds")
+
+ou_data_3_big_clades <- mvOU(tree = simmap_data_3_big_clades,
+                data = trait[rownames(trait) %in% simmap_data_3_big_clades$tip.label, ]
+, 
+                model = "OUM", param = list(decomp = "cholesky"), method = "rpf", optimization = "L-BFGS-B")
+
+saveRDS(ou_data_3_big_clades, file = "ou_data_3_big_clades.rds")
+
+```
+
+```{r plot tree to check clades, eval=FALSE, echo=FALSE, fig.height=20}
+
+simmap_7_clades <- readRDS("simmap_7_clades.rds")
+
+cls <- viridis(ncol(simmap_7_clades$Q))
+names(cls) <- colnames(simmap_7_clades$Q)
+
+plotSimmap(simmap_7_clades, fsize = 0.5, colors = cls, add = FALSE)
+
+```
+
+```{r plot tree fan, eval=TRUE, echo=FALSE, fig.height = 10}
+
+simmap_7_clades <- readRDS("simmap_7_clades.rds")
+
+cls <- viridis(ncol(simmap_7_clades$Q))
+names(cls) <- colnames(simmap_7_clades$Q)
+
+plotSimmap(simmap_7_clades, fsize = 0.00001, colors = cls, add = FALSE, type = "fan")
+
+```
+
+```{r print results, eval = TRUE, echo = FALSE}
+
+## AICS  for models
+ou_1_regime <- readRDS("ou_1_regime.rds")
+
+ou_hummers_vs_all <- readRDS("ou_hummers_vs_all.rds")
+
+ou_8_clades <- readRDS("ou_8_clades.rds")
+
+ou_nightjars_vs_all <- readRDS("ou_nightjars_vs_all.rds")
+
+ou_data_3_big_clades <- readRDS("ou_data_3_big_clades.rds")
+
+aics <- data.frame(
+  model = c("1 regime", "1 regime per clade", "Nightjars vs Hummers + Swifts", "Hummers vs Swifts + Nightjars",  "Hummers vs Swifts vs Nightjars"), 
+  AIC = c(AIC(ou_1_regime), AIC(ou_8_clades), AIC(ou_nightjars_vs_all), AIC(ou_hummers_vs_all),   AIC(ou_data_3_big_clades)))
+
+aics$delta <- aics$AIC - min(aics$AIC)  
+
+aics <- aics[order(aics$delta), ]
+
+df1 <- knitr::kable(aics, row.names = FALSE, escape = FALSE, format = "html")
+
+df1 <- row_spec(df1, which(aics$delta== 0), background = adjustcolor(cols[9], alpha.f = 0.3))
+
+kable_styling(df1, bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = FALSE, font_size = 12)
+
+```
+
+```{r Likelihood-ratio test:, eval = FALSE, echo = FALSE}
+
+LRT(ou_hummers_vs_all, ou_1_regime)
+LRT(ou_nightjars_vs_all, ou_1_regime)
+LRT(ou_data_3_big_clades, ou_1_regime)
+LRT(ou_8_clades, ou_1_regime)
+
+#print best model
+ou_1_regime
+
+```
+
+## Univariate OU models
+
+Testing for a shift between the trait optima for the groups using a univariate test. Here we make a trade-off between incorporating the covariance between the traits to potentially increase the power of the test. Note that it is possible to get distinct results between the univariate and multivariate analyses.
+
+### Hummingbirds vs Swifts
+```{r, eval = FALSE, echo = FALSE}
+
+phy <- readRDS("phy_simmap.rds")
+
+## Fit a OU1 and OU2 model for each of the traits.
+
+## Select the models to be fitted.
+models <- c("OU1", "OUM", "OUMV", "BM1", "BMS") ## Only the OU model variants here.
+
+## Element types.
+trait3 <- as.data.frame(trait)
+trait3$species <- rownames(trait)
+
+aggtrait <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ species, trait3, mean)
+
+
+se <- function(x) sd(x) / sqrt(length(x))
+
+aggse <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ species, trait3, se)
+
+for(i in 2:5){
+  aggse[which(aggse[, i] == 0), i] <- mean(aggse[which(aggse[, i] != 0), i], na.rm = TRUE)
+aggse[is.na(aggse[, i]), i] <- mean(aggse[, i], na.rm = TRUE)
+}
+
+colnames(aggse) <- paste0("se.", colnames(aggse))
+
+aggtrait <- cbind(aggtrait, aggse[, 2:5])
+
+df <- merge(aggtrait, sp2, all.y = FALSE, sort = FALSE)
+
+df$Clade[df$Clade != "Swifts"] <- "Humm"
+
+df$regime <- df$Clade
+
+el.ty <- df[, c("species", "regime", "elm.types", "se.elm.types")]
+
+fit.el.ty <- pblapply(models, function(x) OUwie( phy = phy, data = el.ty, model = x, simmap.tree = TRUE, quiet = TRUE, mserr = "known"), cl = 3)
+
+names(fit.el.ty) <- models
+
+saveRDS( fit.el.ty, file = "fit_univariate_elm.types.rds")
+
+## Sequence complexity.
+sq.com <- df[, c("species", "regime", "sq.complx", "se.sq.complx")]
+
+fit.sq.com <- pblapply(models, function(x) OUwie( phy = phy, data = sq.com, model = x, simmap.tree = TRUE, quiet = TRUE, mserr = "known"), cl = 3)
+
+names(fit.sq.com) <- models
+
+saveRDS( fit.sq.com, file = "fit_univariate_sq.complx.rds")
+
+## Acoustic space.
+ac.spc <- df[, c("species", "regime", "acous.spc", "se.acous.spc")]
+
+fit.ac.spc <- pblapply(models, function(x) OUwie( phy = phy, data = ac.spc, model = x, simmap.tree = TRUE, quiet = TRUE, mserr = "known"), cl = 3)
+
+names(fit.ac.spc) <- models
+
+saveRDS( fit.ac.spc, file = "fit_univariate_acous.spc.rds" )
+
+## between song variation
+bt.sng.vr <- df[, c("species", "regime", "btwn.song.var.IMP", "se.btwn.song.var.IMP")]
+
+fit.bt.sng.vr <- pblapply(models, function(x) OUwie(phy = phy, data = bt.sng.vr, model = x, simmap.tree = TRUE, quiet = TRUE, mserr = "known"), cl = 3)
+
+names(fit.bt.sng.vr) <- models
+
+saveRDS(fit.bt.sng.vr, file = "fit_univariate_bt.sng.vr.rds")
+
+```
+
+```{r, eval = TRUE, echo = FALSE}
+
+## Checking the results.
+fit.el.ty <- readRDS("fit_univariate_elm.types.rds")
+fit.sq.com <- readRDS("fit_univariate_sq.complx.rds")
+fit.ac.spc <- readRDS("fit_univariate_acous.spc.rds")
+fit.bt.sng.vr <- readRDS("fit_univariate_bt.sng.vr.rds")
+
+# check  models
+aics.et <- data.frame(parameter = "element types", models = names(fit.el.ty), parameters = sapply(fit.el.ty, function(x) x$param.count), AIC = sapply(fit.el.ty, function(x) x$AICc)) 
+
+aics.sq <- data.frame(parameter = "sequence complexity", models = names(fit.sq.com), parameters = sapply(fit.el.ty, function(x) x$param.count), AIC = sapply(fit.sq.com, function(x) x$AICc)) 
+
+aics.as <- data.frame(parameter = "acoustic space", models = names(fit.ac.spc), parameters = sapply(fit.ac.spc, function(x) x$param.count), AIC = sapply(fit.ac.spc, function(x) x$AICc)) 
+
+aics.bsvr <- data.frame(parameter = "between song variation", models = names(fit.bt.sng.vr), parameters = sapply(fit.bt.sng.vr, function(x) x$param.count), AIC = sapply(fit.bt.sng.vr, function(x) x$AICc)) 
+
+aics <- rbind(aics.as, aics.et, aics.sq, aics.bsvr)
+
+# aics <- aics[aics$models %in%  names(fit.ac.spc), ]
+
+aics$delta <- unlist(tapply(aics$AIC, aics$parameter, function(x) x - min(x)))
+
+aics <- aics[order(aics$parameter, aics$delta), ]
+
+df1 <- knitr::kable(aics, row.names = FALSE, escape = FALSE)
+
+df1 <- row_spec(df1, which(aics$delta < 2), background = adjustcolor(cols[9], alpha.f = 0.3))
+
+kable_styling(df1, bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = FALSE, font_size = 12)
+
+
+### plot optimas
+fit.l <- list(fit.el.ty, fit.sq.com, fit.ac.spc, fit.bt.sng.vr)
+
+names(fit.l) <- colnames(trait)
+
+ttas <- lapply(names(fit.l), function(x) data.frame(clade = c("Humminbirds", "Swifts"), param = x, fit.l[[x]]$OUMV$theta))
+
+
+theta <- do.call(rbind, ttas)
+
+names(theta)[3] <- "theta"
+
+theta$param <- factor(theta$param, levels = c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"), 
+                  labels = c("Element types", "Sequence complexity", "Acoustic space", "Between song variation"))
+
+ggplot(theta, aes(x = clade, y = theta, col = clade)) + 
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin = theta - se, ymax = theta + se), width=.05, size = 1.2) +
+  scale_color_manual(values= h.s.cols) + 
+  facet_wrap(~ param, scales = "free_y") +
+  labs(x = "Clade", y = "OU optima") + 
+  theme(legend.position = "none")
+
+```
+
+Acoustic space OUMV:
+```{r print 2-optima OU results Acoustic space, eval = TRUE, echo = FALSE}
+
+fit.ac.spc$OUMV
+
+```
+
+Between song variation OUMV:
+```{r print 2-optima OU results btwn song variation, eval = TRUE, echo = FALSE}
+
+fit.bt.sng.vr$OUMV
+
+```
+
+### Different regimes for each clade (excluding Patagonas and Topazes)
+```{r, eval = FALSE, echo = FALSE}
+
+phy.regimes.clds <- readRDS("phy_simmap_clades.rds")
+
+## Fit a OU1 and OU2 model for each of the traits.
+
+## Select the models to be fitted.
+models <- c("OU1", "OUM", "OUMV", "BM1", "BMS") ## Only the OU model variants here.
+
+## Element types.
+trait4 <- as.data.frame(trait2)
+trait4$species <- rownames(trait2)
+
+aggtrait <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ species, trait4, mean)
+
+df <- merge(aggtrait, sp2, all.y = FALSE, sort = FALSE)
+
+df$regime <- df$Clade
+
+el.ty <- df[, c("species", "regime", "elm.types")]
+
+fit.el.ty <- pblapply(models, function(x) OUwie(phy = phy.regimes.clds, data = el.ty, model = x, simmap.tree = TRUE, quiet = FALSE), cl = 3)
+
+names(fit.el.ty) <- models
+
+saveRDS( fit.el.ty, file = "fit_univariate_elm.types_mult.regimes.rds")
+
+## Sequence complexity.
+sq.com <- df[, c("species", "regime", "sq.complx")]
+
+fit.sq.com <- pblapply(models, function(x) OUwie(phy = phy.regimes.clds, data = sq.com, model = x, simmap.tree = TRUE, quiet = FALSE), cl = 3)
+
+names(fit.sq.com) <- models
+
+saveRDS( fit.sq.com, file = "fit_univariate_sq.complx_mult.regimes.rds")
+
+## Acoustic space.
+ac.spc <- df[, c("species", "regime", "acous.spc")]
+
+fit.ac.spc <- pblapply(models, function(x) OUwie( phy = phy.regimes.clds, data = ac.spc, model = x, simmap.tree = TRUE, quiet = FALSE), cl = 3)
+
+names(fit.ac.spc) <- models
+
+saveRDS( fit.ac.spc, file = "fit_univariate_acous.spc_mult.regimes.rds")
+
+## between song variation
+bt.sng.vr <- df[, c("species", "regime", "btwn.song.var.IMP")]
+
+fit.bt.sng.vr <- pblapply(models, function(x) OUwie(phy = phy.regimes.clds, data = bt.sng.vr, model = x, simmap.tree = TRUE, quiet = FALSE), cl = 3)
+
+names(fit.bt.sng.vr) <- models
+
+saveRDS(fit.bt.sng.vr, file = "fit_univariate_bt.sng.vr_mult.regimes.rds")
+
+```
+
+```{r, eval = TRUE, echo = FALSE}
+
+## Checking the results.
+fit.el.ty <- readRDS("fit_univariate_elm.types_mult.regimes.rds")
+fit.sq.com <- readRDS("fit_univariate_sq.complx_mult.regimes.rds")
+fit.ac.spc <- readRDS("fit_univariate_acous.spc_mult.regimes.rds")
+fit.bt.sng.vr <- readRDS("fit_univariate_bt.sng.vr_mult.regimes.rds")
+
+# check models
+aics.et <- data.frame(parameter = "element types", models = names(fit.el.ty), parameters = sapply(fit.el.ty, function(x) x$param.count), AIC = sapply(fit.el.ty, function(x) x$AICc)) 
+
+aics.sq <- data.frame(parameter = "sequence complexity", models = names(fit.sq.com), parameters = sapply(fit.sq.com, function(x) x$param.count), AIC = sapply(fit.sq.com, function(x) x$AICc)) 
+
+aics.as <- data.frame(parameter = "acoustic space", models = names(fit.ac.spc), parameters = sapply(fit.ac.spc, function(x) x$param.count), AIC = sapply(fit.ac.spc, function(x) x$AICc)) 
+
+aics.bsvr <- data.frame(parameter = "between song variation", models = names(fit.bt.sng.vr), parameters = sapply(fit.bt.sng.vr, function(x) x$param.count), AIC = sapply(fit.bt.sng.vr, function(x) x$AICc)) 
+
+
+aics <- rbind(aics.as, aics.et, aics.sq, aics.bsvr)
+
+# aics <- aics[aics$models %in%  names(fit.ac.spc), ]
+
+aics$delta <- unlist(tapply(aics$AIC, aics$parameter, function(x) x - min(x)))
+
+aics <- aics[order(aics$parameter, aics$delta), ]
+
+df1 <- knitr::kable(aics, row.names = FALSE, escape = FALSE)
+
+df1 <- row_spec(df1, which(aics$delta < 2), background = adjustcolor(cols[9], alpha.f = 0.3))
+
+kable_styling(df1, bootstrap_options = c("striped", "hover", "condensed", "responsive"), full_width = FALSE, font_size = 12)
+
+
+## plot optimas
+fit.l <- list(fit.el.ty, fit.sq.com, fit.ac.spc, fit.bt.sng.vr)
+
+names(fit.l) <- colnames(trait)
+
+ttas <- lapply(names(fit.l), function(x) data.frame(clade = trg.clds, param = x, fit.l[[x]]$OUMV$theta))
+
+
+theta <- do.call(rbind, ttas)
+
+names(theta)[3] <- "theta"
+
+theta <- merge(theta, sp.count)
+
+theta$param <- factor(theta$param, levels = c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"), 
+                  labels = c("Element types", "Sequence complexity", "Acoustic space", "Between song variation"))
+
+theta$Family <- ifelse(theta$clade != "Swifts", "Humming.", "Swifts")
+
+ggplot(theta, aes(x = clade, y = theta, col = Family, size = sp.count)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = theta - se, ymax = theta + se), width=.05, size = 1.2) +
+  scale_color_manual(values = h.s.cols) +
+  scale_size_continuous(name = " # of \nspecies") +
+  facet_wrap(~ param, scales = "free_y") +
+  labs(x = "Clade", y = "OU optima", size = "Species #") + 
+  theme(axis.text.x = element_text(angle=45, hjust =1))
+
+
+```
+
+#### Best model results
+
+Acoustic space OUM:
+```{r print multi-optima OU results Acoustic space, eval = TRUE, echo = FALSE}
+
+fit.ac.spc$OUM
+
+```
+
+Element types OUMV:
+```{r print multi-optima OU results Element types, eval = TRUE, echo = FALSE}
+
+fit.el.ty$OUMV
+
+```
+
+Sequence complexity OUM:
+```{r print multi-optima OU results Sequence complexity, eval = TRUE, echo = FALSE}
+
+fit.sq.com$OUM
+
+```
+
+Between song variation OUMV:
+```{r print multi-optima OU results btwn song variation, eval = TRUE, echo = FALSE}
+
+fit.bt.sng.vr$OUMV
+
+```
+
+```{r compare diversification rates, eval = FALSE, echo = FALSE}
+
+phy <- read.tree("consensus_tree_swifts_and_hummingbirds_max_cred.tree")
+
+# parameters and metadata
+sp <- read.csv("Element parameters hummingbirds and swifts.csv", stringsAsFactors = FALSE)
+
+sp <- sp[!duplicated(sp$Species), ]
+
+sp$Species <- gsub(" ", "_", sp$Species)
+
+swft.tree <- drop.tip(phy, tip = sp$Species[sp$Clade != "Swifts"])
+hmm.tree <- drop.tip(phy, tip = sp$Species[sp$Clade == "Swifts"])
+
+trees <- list(hmm.tree, swft.tree)
+
+class(trees) <- "multiPhylo"
+
+rho <- Ntip(trees) / c(344, 112)
+
+# rho are the proportion of sample especies for each clade
+rt.diver <- ratebytree(trees, rho = rho)
+
+## compare all clades
+trees <- lapply(trg.clds, function(x)  drop.tip(phy, tip = sp$Species[sp$Clade != x]))
+
+class(trees) <- "multiPhylo"
+names(trees) <- trg.clds
+
+# rho are the proportion of sample especies for each clade
+rt.diver.cldes <- ratebytree(trees, rho = c(rep(rho[1], 7), rho[2]))
+
+```
+
+### Compare evolutionary rates of hummingbirds and swifts
+From rate-matrix:
+```{r compare evolutionary rate matrix, eval = TRUE, echo = FALSE, fig.height = 3}
+
+## Compare the posterior distribution of evolutionary rates for hummingbird and swift traits.
+## Need to use absolute paths for the files here because the results are not in this folder.
+
+sd_swift_raw1 <- read.csv(file = "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.25944.sd", sep = ";" )[,1:3]
+sd_swift_raw2 <- read.csv(file = "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.43797.sd", sep = ";" )[,1:3]
+sd_swift_raw3 <- read.csv(file = "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.98567.sd", sep = ";" )[,1:3]
+sd_swift <- rbind( sd_swift_raw1, sd_swift_raw2, sd_swift_raw3 )
+sd_swift <- sd_swift^2
+
+sd_humm_raw1 <- read.csv(file = "./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.21614.sd", sep = ";" )[,1:3]
+sd_humm_raw2 <- read.csv(file = "./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.48565.sd", sep = ";" )[,1:3]
+sd_humm_raw3 <- read.csv(file = "./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.57893.sd", sep = ";" )[,1:3]
+sd_humm <- rbind( sd_humm_raw1, sd_humm_raw2, sd_humm_raw3 )
+sd_humm <- sd_humm^2
+
+## Check the difference in the rates between the two.
+# summary( sd_humm )
+# summary( sd_swift )
+
+# pdf( "rate_diff_bluearehumm_homo_polytope.pdf", width = 3*5, height = 5)
+par( mfrow = c(1,3) )
+
+bb <- seq(from = 0, to = 50, length.out = 2000)
+
+hist(x = sd_humm[,1], freq = FALSE, xlim = c(0,1), ylim = c(0,10), breaks = bb, border = 
+   h.s.cols[1], main = "Element types", xlab = "Evolutionary rate", col = h.s.cols.t[1])
+hist(x = sd_swift[,1], freq = FALSE, add = TRUE, breaks = bb, border = h.s.cols[2], col = h.s.cols.t[2])
+
+bb <- seq(from = 0, to = 50, length.out = 4000)
+hist(x = sd_humm[,2], freq = FALSE, xlim = c(0,0.5), ylim = c(0,40), breaks = bb, border = h.s.cols[1], main = "Sequence complexity"
+   , xlab = "Evolutionary rate", col = h.s.cols.t[1])
+hist(x = sd_swift[,2], freq = FALSE, add = TRUE, breaks = bb, border = h.s.cols[2], col = h.s.cols.t[2])
+
+bb <- seq(from = 0, to = 50, length.out = 700)
+hist(x = sd_humm[,3], freq = FALSE, xlim = c(0,3), ylim = c(0,3), breaks = bb, border = h.s.cols[1]
+   , main = "Acoustic space", xlab = "Evolutionary rate", col = h.s.cols.t[1])
+hist(x = sd_swift[,3], freq = FALSE, add = TRUE, breaks = bb, border = h.s.cols[2], col = h.s.cols.t[2])
+# dev.off()
+
+# apply(sd_swift, 2, mean)
+# apply(sd_humm, 2, mean)
+
+```
+
+```{r compare evolutionary rates phytools, eval = FALSE, echo = FALSE}
+
+# parameters and metadata
+sp <- read.csv("Element parameters hummingbirds and swifts.csv", stringsAsFactors = FALSE)
+
+sp <- sp[!duplicated(sp$Species), ]
+
+sp$Species <- gsub(" ", "_", sp$Species)
+
+
+table(sp$Clade)
+
+swft.tree <- drop.tip(phy, tip = sp$Species[sp$Clade != "Swifts"])
+hmm.tree <- drop.tip(phy, tip = sp$Species[sp$Clade == "Swifts"])
+
+h.s.trees <- list(hmm.tree, swft.tree)
+
+class(h.s.trees) <- "multiPhylo"
+
+# get aggreate mean and se for complexity traits
+mn.traits <- aggregate(trait, by = list(rownames(trait)), mean)
+se.traits <- aggregate(trait, by = list(rownames(trait)), function(x) sd(x) / sqrt(length(x)))
+
+# impute NAs with mean se
+se.traits[is.na(se.traits[, 2]) | se.traits[, 2] == 0, 2] <- mean(se.traits[, 2], na.rm = TRUE)
+se.traits[is.na(se.traits[, 3] | se.traits[, 3] == 0) , 3] <- mean(se.traits[, 3], na.rm = TRUE)
+se.traits[is.na(se.traits[, 4] | se.traits[, 4] == 0), 4] <- mean(se.traits[, 4], na.rm = TRUE)
+se.traits[is.na(se.traits[, 5] | se.traits[, 5] == 0), 5] <- mean(se.traits[, 5], na.rm = TRUE)
+
+## compare rates for all 4 traits
+ev.rt.mods <- pblapply(colnames(trait), cl = 3, function(w){
+
+  mn.trt <- lapply(sapply(h.s.trees, function(x) x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  se.trt <- lapply(sapply(h.s.trees, function(x) x$tip.label), function(y) {
+   a <- se.traits[se.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  # compare rates
+  ev.rts <- ratebytree(h.s.trees, mn.trt, se = se.trt)
+
+})
+
+names(ev.rt.mods) <- colnames(trait)
+
+saveRDS(ev.rt.mods, "compare_evo_rates_hmm_vs_swifts_including_error.RDS")
+
+
+#### replicate hummingbirds 30 times subsampling an equal proportion of especies that the ones included in swifts
+
+sp.prop <-  1- Ntip(h.s.trees[[2]]) / 112
+
+## compare rates for all 4 traits subsampling humm species
+ev.rt.mods.sub.smp <- pbreplicate(n = 30, expr = sapply(colnames(trait), function(w){
+
+  h.s.trees2 <- h.s.trees
+  h.s.trees2[[1]] <- drop.tip(h.s.trees2[[1]], sample(h.s.trees2[[1]]$tip.label, Ntip(h.s.trees2[[1]]) * sp.prop))
+  
+  mn.trt <- lapply(sapply(h.s.trees2, function(x)  x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  se.trt <- lapply(sapply(h.s.trees2, function(x) x$tip.label), function(y) {
+   a <- se.traits[se.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  # compare rates
+  ev.rts <- ratebytree(h.s.trees2, mn.trt, se = se.trt)
+
+  return(ev.rts$multi.rate.model$sig2)
+}), cl = 3)
+
+ev.rt.mods.sub.smp <- do.call(rbind, lapply(seq(dim(ev.rt.mods.sub.smp)[3]), function(x) data.frame(ev.rt.mods.sub.smp[ , , x], clade = c("Hummingbirds", "Swifts"))))
+
+saveRDS(ev.rt.mods.sub.smp, "compare_evo_rates_hmm_vs_swifts_including_error_subsampling.RDS")
+
+#### all hummingbirds clades 
+#target clades
+trg.clds <- c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees", "Swifts")
+
+## compare all clades
+cld.trees <- lapply(trg.clds, function(x)  drop.tip(phy, tip = sp$Species[sp$Clade != x]))
+
+class(cld.trees) <- "multiPhylo"
+names(cld.trees) <- trg.clds
+
+ev.rt.mods.clds <- pblapply(colnames(trait), cl = 3, function(w){
+  
+  mn.trt <- lapply(sapply(cld.trees, function(x) x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  ev.rts.clds <- ratebytree(cld.trees, mn.trt)
+  
+})
+
+names(ev.rt.mods.clds) <- colnames(trait)
+
+saveRDS(ev.rt.mods.clds, "compare_evo_rates_all_clades.RDS")
+
+
+# including error
+ev.rt.mods.clds.se <- pblapply(colnames(trait), cl = 3, function(w){
+  
+  mn.trt <- lapply(sapply(cld.trees, function(x) x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  se.trt <- lapply(sapply(cld.trees, function(x) x$tip.label), function(y) {
+   a <- se.traits[se.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  ev.rts.clds <- ratebytree(cld.trees, mn.trt, se = se.trt)
+})
+
+names(ev.rt.mods.clds.se) <- colnames(trait)
+
+
+saveRDS(ev.rt.mods.clds.se, "compare_evo_rates_all_clades_including_error.RDS")
+
+```
+
+```{r  compare multivariate evolutionary rates geomorph, eval = FALSE, echo = FALSE}
+
+# parameters and metadata
+sp <- read.csv("Element parameters hummingbirds and swifts.csv", stringsAsFactors = FALSE)
+
+sp <- sp[!duplicated(sp$Species), ]
+
+sp$Species <- gsub(" ", "_", sp$Species)
+
+# get aggreate mean and se for complexity traits
+mn.traits <- aggregate(trait, by = list(rownames(trait)), mean)
+
+# sort as in phylo
+mn.traits <- mn.traits[match(phy$tip.label, mn.traits$Group.1), ]
+
+rownames(mn.traits) <- mn.traits$Group.1
+
+mn.traits <- as.matrix(mn.traits[, -1])
+
+# set name of clades humms vs swifts
+gp <- ifelse(sp$Clade != "Swifts", "Hummingbirds", sp$Clade)
+names(gp) <- sp$Species
+gp <- gp[match(phy$tip.label, names(gp))]
+
+cmp.evo.rts.gm <- compare.evol.rates(phy = phy, A = mn.traits, gp = gp, iter = 10000)
+
+sp2 <- sp[sp$Clade %in% trg.clds, ]
+
+# set name of clades humms vs swifts
+gp2 <- sp2$Clade
+names(gp2) <- sp2$Species
+
+phy2 <- drop.tip(phy, tip = sp2$species)
+
+gp2 <- gp2[match(phy2$tip.label, names(gp2))]
+
+
+mn.traits2 <- mn.traits[rownames(mn.traits) %in% c(phy2$tip.label),]
+
+cmp.evo.rts.gm.clds <- compare.evol.rates(phy = phy2, A = mn.traits2, gp = gp2, iter = 10000)
+
+saveRDS(list(cmp.evo.rts.gm = cmp.evo.rts.gm, cmp.evo.rts.gm.clds = cmp.evo.rts.gm.clds), "compare_multivariate_evo_rates_hmm_vs_swifts.RDS")
+
+```
+
+#### Multivariate evolutionary rates
+```{r, eval = TRUE, echo = FALSE}
+
+attach(readRDS("compare_multivariate_evo_rates_hmm_vs_swifts.RDS"))
+
+summary(cmp.evo.rts.gm)
+
+summary(cmp.evo.rts.gm.clds)
+
+cmp.evo.rts.gm.clds$pairwise.pvalue
+
+```
+
+```{r plot evo rates, eval = TRUE, echo = FALSE}
+
+ev.rts <- readRDS("compare_evo_rates_hmm_vs_swifts_including_error.RDS")
+
+# extract results
+ev.rts.res <- lapply(names(ev.rts), function(x){
+  
+  # sigma^2 values
+  mod <- ev.rts[[x]]
+  df <- data.frame(param = x, clade = c("Hummingbirds", "Swifts"), sigma2 = mod$multi.rate.model$sig2, se.sigma2 =  mod$multi.rate.model$SE.sig2)
+
+  df$p.value <- c(mod$P.chisq, rep(NA, nrow(df) - 1))
+ df$letter <- if (mod$P.chisq > 0.05) rep("a", 2) else letters[1:2]
+  
+  return(df)
+
+})
+
+ev.rts.res <- do.call(rbind, ev.rts.res)
+
+ev.rts.res$clade <- factor(ev.rts.res$clade, levels = c("Hummingbirds", "Swifts"))
+
+ev.rts.res$param <- factor(ev.rts.res$param, levels = c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"), 
+                  labels = c("Element types", "Sequence complexity", "Acoustic space", "Between song variation"))
+
+
+ggplot(ev.rts.res, aes(x = clade, y = sigma2, col = clade)) + 
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin = sigma2 - se.sigma2, ymax = sigma2 + se.sigma2), width=.05, size = 1.2) +
+  scale_color_manual(values= h.s.cols) + 
+  facet_wrap(~ param, scales = "free_y") +
+  labs(x = "Clade", y = "Evolutionary rate") + 
+  theme(legend.position = "none")
+```
+
+#### Subsampling 30 times equal proportion of sampled species
+```{r, eval = TRUE, echo = FALSE}
+
+ev.rts.ss <- readRDS("compare_evo_rates_hmm_vs_swifts_including_error_subsampling.RDS")
+
+# extract results
+agg.ev.rts.ss <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ clade, data = ev.rts.ss, mean)
+
+agg.ev.rts.ss.2.5 <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ clade, data = ev.rts.ss, function(x) quantile(x, 0.025))
+
+agg.ev.rts.ss.97.5 <- aggregate(cbind(elm.types, sq.complx, acous.spc, btwn.song.var.IMP) ~ clade, data = ev.rts.ss, function(x) quantile(x, 0.975))
+
+# aggregate mean sigma2
+agg.ev.rts.ss <- gather(agg.ev.rts.ss, key = "param", value = "sigma2", c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"))
+
+# add low CI
+agg.ev.rts.ss$low.CI <- gather(agg.ev.rts.ss.2.5, key = "param", value = "low.CI", c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"))$low.CI
+
+# add upp CI
+agg.ev.rts.ss$upp.CI <- gather(agg.ev.rts.ss.97.5, key = "param", value = "upp.CI", c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"))$upp.CI
+
+agg.ev.rts.ss$clade <- factor(agg.ev.rts.ss$clade, levels = c( "Hummingbirds", "Swifts"))
+
+
+agg.ev.rts.ss$param <- factor(agg.ev.rts.ss$param, levels = c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"), 
+                  labels = c("Element types", "Sequence complexity", "Acoustic space", "Between song variation"))
+
+
+ggplot(agg.ev.rts.ss, aes(x = clade, y = sigma2, col = clade)) + 
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin = low.CI, ymax = upp.CI), width=.05, size = 1.2) +
+  scale_color_manual(values= h.s.cols) + 
+  facet_wrap(~ param, scales = "free_y") +
+  labs(x = "Clade", y = "Evolutionary rate") + 
+  theme(legend.position = "none")
+
+```
+
+#### By clade
+```{r, echo = FALSE}
+
+ev.rt.mods.clds.se <- readRDS("compare_evo_rates_all_clades_including_error.RDS")
+
+# extract results
+ev.rts.clds.res <- lapply(names(ev.rt.mods.clds.se), function(x){
+  
+  # sigma^2 values
+  mod <- ev.rt.mods.clds.se[[x]]
+  df <- data.frame(param = x, clade =  c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees",  "Swifts"), sigma2 = mod$multi.rate.model$sig2, se.sigma2 =  mod$multi.rate.model$SE.sig2)
+
+  df$p.value <- c(mod$P.chisq, rep(NA, nrow(df) - 1))
+ # df$letter <- if (mod$P.chisq > 0.05) rep("a", 2) else letters[1:2]
+  
+  return(df)
+
+})
+
+ev.rts.clds.res <- do.call(rbind, ev.rts.clds.res)
+
+ev.rts.clds.res <- merge(ev.rts.clds.res, sp.count)
+
+ev.rts.clds.res$param <- factor(ev.rts.clds.res$param, levels = c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"), 
+                  labels = c("Element types", "Sequence complexity", "Acoustic space", "Between song variation"))
+
+ev.rts.clds.res$Family <- ifelse(ev.rts.clds.res$clade != "Swifts", "Humming.", "Swifts")
+
+ggplot(ev.rts.clds.res, aes(x = clade, y = sigma2, col = Family, size = sp.count)) + 
+  geom_point() +
+  geom_errorbar(aes(ymin = sigma2 - se.sigma2, ymax = sigma2 + se.sigma2), width=.05, size = 1.2) +
+  scale_color_manual(values= h.s.cols) + 
+  facet_wrap(~ param, scales = "free_y") + 
+  theme(axis.text.x = element_text(angle=45, hjust =1)) +
+  labs(x = "Clade", y = "Evolutionary rate", size = "Species #") 
+
+## without measuring error
+# ev.rt.mods.clds <- readRDS("compare_evo_rates_all_clades.RDS")
+# 
+# # extract results
+# ev.rts.clds.res <- lapply(names(ev.rt.mods.clds), function(x){
+#   
+#   # sigma^2 values
+#   mod <- ev.rt.mods.clds[[x]]
+#   df <- data.frame(param = x, clade =  c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees",  "Swifts"), sigma2 = mod$multi.rate.model$sig2, se.sigma2 =  mod$multi.rate.model$SE.sig2)
+# 
+#   df$p.value <- c(mod$P.chisq, rep(NA, nrow(df) - 1))
+#  # df$letter <- if (mod$P.chisq > 0.05) rep("a", 2) else letters[1:2]
+#   
+#   return(df)
+# 
+# })
+# 
+# ev.rts.clds.res <- do.call(rbind, ev.rts.clds.res)
+# 
+# ev.rts.clds.res <- merge(ev.rts.clds.res, sp.count)
+# 
+# 
+# ev.rts.clds.res$param <- factor(ev.rts.clds.res$param, levels = c("elm.types", "sq.complx", "acous.spc", "btwn.song.var.IMP"), 
+#                   labels = c("Element types", "Sequence complexity", "Acoustic space", "Between song variation"))
+# 
+# ev.rts.clds.res$Family <- ifelse(ev.rts.clds.res$clade != "Swifts", "Humming.", "Swifts")
+# 
+# 
+# ggplot(ev.rts.clds.res, aes(x = clade, y = sigma2, col = Family, size = sp.count)) + 
+#   geom_point() +
+#   geom_errorbar(aes(ymin = sigma2 - se.sigma2, ymax = sigma2 + se.sigma2), width=.05, size = 1.2) +
+#   scale_color_manual(values= h.s.cols) + 
+#   facet_wrap(~ param, scales = "free_y") +
+#   labs(x = "Clade", y = "Evolutionary rate", size = "Species #") +
+#    theme(axis.text.x = element_text(angle=45, hjust =1))
+
+
+```
+
+### Compare OU optimas of hummingbirds and swifts
+```{r  compare evolutionary optimas phytools, eval = FALSE, echo = FALSE}
+
+# parameters and metadata
+sp <- read.csv("Element parameters hummingbirds and swifts.csv", stringsAsFactors = FALSE)
+
+sp <- sp[!duplicated(sp$Species), ]
+
+sp$Species <- gsub(" ", "_", sp$Species)
+
+
+table(sp$Clade)
+
+swft.tree <- drop.tip(phy, tip = sp$Species[sp$Clade != "Swifts"])
+hmm.tree <- drop.tip(phy, tip = sp$Species[sp$Clade == "Swifts"])
+
+h.s.trees <- list(hmm.tree, swft.tree)
+
+class(h.s.trees) <- "multiPhylo"
+
+# aggregate mean and se for complexity traits
+mn.traits <- aggregate(trait, by = list(rownames(trait)), mean)
+se.traits <- aggregate(trait, by = list(rownames(trait)), function(x) sd(x) / sqrt(length(x)))
+
+# impute NAs with mean se
+se.traits[is.na(se.traits[, 2]) | se.traits[, 2] == 0, 2] <- mean(se.traits[, 2], na.rm = TRUE)
+se.traits[is.na(se.traits[, 3] | se.traits[, 3] == 0) , 3] <- mean(se.traits[, 3], na.rm = TRUE)
+se.traits[is.na(se.traits[, 4] | se.traits[, 4] == 0), 4] <- mean(se.traits[, 4], na.rm = TRUE)
+se.traits[is.na(se.traits[, 5] | se.traits[, 5] == 0), 5] <- mean(se.traits[, 5], na.rm = TRUE)
+
+## compare optimas for all 4 traits
+ev.opt.mods <- pblapply(colnames(trait), cl = 3, function(w){
+
+  mn.trt <- lapply(sapply(h.s.trees, function(x) x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  se.trt <- lapply(sapply(h.s.trees, function(x) x$tip.label), function(y) {
+   a <- se.traits[se.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  # compare rates
+  ev.opts <- ratebytree(h.s.trees, mn.trt, se = se.trt, model = "OU")
+
+})
+
+names(ev.opt.mods) <- colnames(trait)
+
+saveRDS(ev.opt.mods, "compare_OU_optima_hmm_vs_swifts_including_error.RDS")
+
+
+#### replicate hummingbirds 30 times subsampling an equal proportion of especies that the ones included in swifts
+
+sp.prop <-  1- Ntip(h.s.trees[[2]]) / 112
+
+## compare rates for all 4 traits subsampling humm species
+ev.opt.mods.sub.smp <- pbreplicate(n = 30, sapply(colnames(trait), function(w){
+
+  h.s.trees2 <- h.s.trees
+  h.s.trees2[[1]] <- drop.tip(h.s.trees2[[1]], sample(h.s.trees2[[1]]$tip.label, Ntip(h.s.trees2[[1]]) * sp.prop))
+  
+  mn.trt <- lapply(sapply(h.s.trees2, function(x)  x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  se.trt <- lapply(sapply(h.s.trees2, function(x) x$tip.label), function(y) {
+   a <- se.traits[se.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  # compare rates
+  ev.opts <- ratebytree(h.s.trees2, mn.trt, se = se.trt, model = "OU")
+
+  return(ev.opts$multi.rate.model$sig2)
+}),  cl = 3)
+
+ev.opt.mods.sub.smp <- do.call(rbind, lapply(seq(dim(ev.opt.mods.sub.smp)[3]), function(x) data.frame(ev.opt.mods.sub.smp[ , , x], clade = c("Hummingbirds", "Swifts"))))
+
+saveRDS(ev.opt.mods.sub.smp, "compare_evo_OU_optima_hmm_vs_swifts_including_error_subsampling.RDS")
+
+#### all hummingbirds clades 
+## compare all clades
+cld.trees <- lapply(trg.clds, function(x)  drop.tip(phy, tip = sp$Species[sp$Clade != x]))
+
+class(cld.trees) <- "multiPhylo"
+names(cld.trees) <- trg.clds
+
+ev.opt.mods.clds <- pblapply(colnames(trait), cl = 3, function(w){
+  
+  mn.trt <- lapply(sapply(cld.trees, function(x) x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  ev.opt.clds <- ratebytree(cld.trees, mn.trt, model = "OU")
+  
+})
+
+names(ev.opt.mods.clds) <- colnames(trait)
+
+saveRDS(ev.opt.mods.clds, "compare_evo_OU_opt_all_clades.RDS")
+
+
+# including error
+ev.opt.mods.clds.se <- pblapply(colnames(trait), cl = 3, function(w){
+  
+  mn.trt <- lapply(sapply(cld.trees, function(x) x$tip.label), function(y) {
+   a <- mn.traits[mn.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  se.trt <- lapply(sapply(cld.trees, function(x) x$tip.label), function(y) {
+   a <- se.traits[se.traits$Group.1 %in% y, ]
+   b <- a[, w]
+   names(b) <- a$Group.1
+   return(b)
+   })
+  
+  ev.opt.clds <- ratebytree(cld.trees, mn.trt, se = se.trt, model = "OU")
+})
+
+names(ev.opt.mods.clds.se) <- colnames(trait)
+
+saveRDS(ev.opt.mods.clds.se, "compare_evo_OU_opt_all_clades_including_error.RDS")
+
+```
+
+```{r plot OU optimas, eval = FALSE, echo = FALSE}
+
+ev.opt.mods <- readRDS("compare_OU_optima_hmm_vs_swifts_including_error.RDS")
+
+
+# extract results
+ev.opt.res <- lapply(names(ev.opt.mods), function(x){
+  
+  # sigma^2 values
+  mod <- ev.opt.mods[[x]]
+  df <- data.frame(param = x, clade = c("Hummingbirds", "Swifts"), sigma2 = mod$multi.rate.model$sig2, se.sigma2 =  mod$multi.rate.model$SE.sig2)
+
+  df$p.value <- c(mod$P.chisq, rep(NA, nrow(df) - 1))
+ df$letter <- if (mod$P.chisq > 0.05) rep("a", 2) else letters[1:2]
+  
+  return(df)
+
+})
+
+ev.rts.res <- do.call(rbind, ev.rts.res)
+
+ev.rts.res$clade <- factor(ev.rts.res$clade, levels = c("Swifts", "Hummingbirds"))
+
+ggplot(ev.rts.res, aes(x = clade, y = sigma2, col = clade)) + 
+  geom_point(size = 2.5) +
+  geom_errorbar(aes(ymin = sigma2 - se.sigma2, ymax = sigma2 + se.sigma2), width=.05, size = 1.2) +
+  scale_color_manual(values= cols[c(1, 6)]) + 
+  facet_wrap(~ param, scales = "free_y") +
+  labs(x = "Clade", y = "Evolutionary rate") + 
+  theme(legend.position = "none")
+```
+
+
+#REMOVE
+```{r compare ancestral reconstruction, eval = FALSE, echo = FALSE}
+
+## The results from the ancestral volumes estimated are a little weird.
+## Here we will try to make plots of the ancestral estimated values directly.
+## Difference is that here we are not going to be using the algorithm that tries to estimate the volumes.
+
+## Get the phylogenies:
+handle_humm <- readRDS( "
+                        ./Daniel_Caetano/polytope_ratematrix_results/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.21614.mcmc.handle.rds" )
+handle_swift <- readRDS( "./Daniel_Caetano/polytope_ratematrix_results//MCMC_results/ratematrixPolyMCMC.25944.mcmc.handle.rds" )
+phy_humm <- handle_humm$phy
+phy_swift <- handle_swift$phy
+
+## Note that here the age of the nodes is with respect to the present.
+## Node height of 0 means present.
+
+library( ape )
+depth_nodes_humm <- node.depth.edgelength( phy = phy_humm )
+height_nodes_humm <- ( depth_nodes_humm - max( depth_nodes_humm ) ) * -1
+humm_table <- cbind(1:length(height_nodes_humm), height_nodes_humm)
+
+depth_nodes_swift <- node.depth.edgelength( phy = phy_swift )
+height_nodes_swift <- ( depth_nodes_swift - max( depth_nodes_swift ) ) * -1
+swift_table <- cbind(1:length(height_nodes_swift), height_nodes_swift)
+
+## Need to correct the tables because of numerical errors.
+ntips_humm <- length( phy_humm$tip.label )
+humm_table[1:ntips_humm,2] <- 0.0
+ntips_swift <- length( phy_swift$tip.label )
+swift_table[1:ntips_swift,2] <- 0.0
+range( swift_table[,2] )
+
+## Define the time epochs that we will compare.
+## Group the nodes inside the epoch per clade.
+## Join the ancestral samples for the nodes on a single table.
+## Estimate the hypervolume. Compute overlap between the clades for each of the epochs.
+n_chunks <- 20
+epochs <- seq(from = 0, to = 50, length.out = n_chunks+1)
+plot( epochs ) ## The epochs are divided in the log scale.
+
+count_nodes <- matrix(nrow = n_chunks, ncol = 2)
+colnames( count_nodes ) <- c("swift", "humm")
+for( i in 2:(n_chunks+1) ){
+    swift <- sum( sapply(swift_table[,2], function(x) epochs[i-1] < x & x < epochs[i] ) )
+    hum <- sum( sapply(humm_table[,2], function(x) epochs[i-1] < x & x < epochs[i] ) )
+    count_nodes[i-1,1] <- swift
+    count_nodes[i-1,2] <- hum
+}
+count_nodes <- cbind(epoch = epochs[1:n_chunks], count_nodes)
+
+## We can make about 9 comparisons based on the nodes and another based on the tip values.
+count_nodes
+
+## Get the ancestral volumes per clade per epoch.
+epoch_nodes_swift <- list()
+epoch_nodes_humm <- list()
+for( i in 2:(n_chunks+1) ){
+    swift_id <- epochs[i-1] < swift_table[,2] & swift_table[,2] < epochs[i]
+    epoch_nodes_swift[[i-1]] <- swift_table[swift_id,1]
+    humm_id <- epochs[i-1] < humm_table[,2] & humm_table[,2] < epochs[i]
+    epoch_nodes_humm[[i-1]] <- humm_table[humm_id,1]
+}
+
+ll_swift <- sapply(epoch_nodes_swift, length)
+ll_humm <- sapply(epoch_nodes_humm, length)
+## Just checking if the number of nodes per category we get here are correct.
+cbind( ll_swift, ll_humm )
+
+## Choose the nodes and start the estimates of the ancestral volumes.
+keep <- 1:9
+
+## Get the ancestral estimates for each of the groups.
+library( ratematrix )
+library( hypervolume )
+
+handle_humm <- readRDS( "/home/daniel/Documents/Academicos/Projects/Arias-Salas_help/polytope_ratematrix_heterogeny/results_hummingbirds/humm_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.21614.mcmc.handle.rds" )
+mcmc_humm <- readMCMC( handle = handle_humm, dir = "/home/daniel/Documents/Academicos/Projects/Arias-Salas_help/polytope_ratematrix_heterogeny/results_hummingbirds/humm_polytope_homo_rates/MCMC_results", thin = 10)
+phy_humm <- handle_humm$phy
+anc_humm <- sampleAncestralStates( phy = phy_humm, mcmc = mcmc_humm )
+
+handle_swift <- readRDS("./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/MCMC_results/ratematrixPolyMCMC.25944.mcmc.handle.rds")
+mcmc_swift <- readMCMC( handle = handle_swift, dir = "./Daniel_Caetano/polytope_ratematrix_results/results_swifts/swift_polytope_homo_rates/", thin = 10)
+phy_swift <- handle_swift$phy
+anc_swift <- sampleAncestralStates( phy = phy_swift, mcmc = mcmc_swift )
+
+for( i in keep ){
+    nodes_humm <- epoch_nodes_humm[[i]]
+    node_pos <- sapply(nodes_humm, function(x) which(x == as.numeric(colnames(anc_humm[,,1]) ) ) )
+    samples_humm <- anc_humm[,node_pos,]
+    samples_humm <- apply(samples_humm, 1, c)
+    colnames( samples_humm ) <- c("elm.types", "sq.complx", "acous.spc")
+
+    nodes_swifts <- epoch_nodes_swift[[i]]
+    node_pos <- sapply(nodes_swifts, function(x) which(x == as.numeric(colnames(anc_swift[,,1]) ) ) )
+    samples_swifts <- anc_swift[,node_pos,]
+    samples_swifts <- apply(samples_swifts, 1, c)
+    colnames( samples_swifts ) <- c("elm.types", "sq.complx", "acous.spc")
+    
+    pdf( paste0("ancestral_plot_epoch_", i, "humm_is_gray.pdf"), width = 12, height = 4 )
+    par( mfrow = c(1,3) )
+    xlim <- range(samples_humm[,1], samples_swifts[,1])
+    ylim <- range(samples_humm[,2], samples_swifts[,2])    
+    plot(samples_humm[,1], samples_humm[,2], pch = 19, col = h.s.cols.t[1]
+       , xlab = colnames(samples_humm)[1], ylab = colnames(samples_humm)[2]
+       , xlim = xlim, ylim = ylim)
+    points(samples_swifts[,1], samples_swifts[,2], pch = 19, col = h.s.cols.t[2])
+    
+    xlim <- range(samples_humm[,1], samples_swifts[,1])
+    ylim <- range(samples_humm[,3], samples_swifts[,3])    
+    plot(samples_humm[,1], samples_humm[,3], pch = 19, col = h.s.cols.t[1]
+       , xlab = colnames(samples_humm)[1], ylab = colnames(samples_humm)[3]
+       , xlim = xlim, ylim = ylim)
+    points(samples_swifts[,1], samples_swifts[,3], pch = 19, col = h.s.cols.t[2])
+
+    xlim <- range(samples_humm[,2], samples_swifts[,2])
+    ylim <- range(samples_humm[,3], samples_swifts[,3])    
+    plot(samples_humm[,2], samples_humm[,3], pch = 19, col = h.s.cols.t[1]
+       , xlab = colnames(samples_humm)[2], ylab = colnames(samples_humm)[3]
+       , xlim = xlim, ylim = ylim)
+    points(samples_swifts[,2], samples_swifts[,3], pch = 19, col = h.s.cols.t[2])
+    dev.off()
+}
+
+## Make the plot of the values using the tip values.
+data.file <- read.csv("/home/daniel/Documents/Academicos/Projects/Arias-Salas_help/polytope_ratematrix_heterogeny/results_hummingbirds/All_songs_complexity_parameters_hummingbirds_and_swifts.csv")
+trait <- as.matrix( data.file[,2:4] )
+spp <- as.character( data.file[,1] )
+unique_species <- unique( spp )
+trait.to.log <- trait[,-2]
+bb <- apply(trait.to.log, 2, min) - 1
+trait.to.log.trans <- t( apply(trait.to.log, 1, function(x) x + (-1*bb) ) )
+trait.to.log.trans <- log( trait.to.log.trans )
+trait <- as.matrix( cbind( trait.to.log.trans[,1], trait[,2], trait.to.log.trans[,2] ) )
+colnames( trait ) <- colnames( trait )
+
+keep_humm <- spp %in% phy_humm$tip.label
+tips_humm <- trait[keep_humm,]
+
+keep_swift <- spp %in% phy_swift$tip.label
+tips_swift <- trait[keep_swift,]
+
+## Plot with the traits at the tips. Nothing much to get from here.
+pdf( paste0("tips_plot_data_humm_is_gray.pdf"), width = 12, height = 4 )
+par( mfrow = c(1,3) )
+xlim <- range(tips_humm[,1], tips_swift[,1])
+ylim <- range(tips_humm[,2], tips_swift[,2])    
+plot(tips_humm[,1], tips_humm[,2], pch = 19, col = h.s.cols.t[1]
+   , xlab = colnames(tips_humm)[1], ylab = colnames(tips_humm)[2]
+   , xlim = xlim, ylim = ylim)
+points(tips_swift[,1], tips_swift[,2], pch = 19, col = h.s.cols.t[2])
+
+xlim <- range(tips_humm[,1], tips_swift[,1])
+ylim <- range(tips_humm[,3], tips_swift[,3])    
+plot(tips_humm[,1], tips_humm[,3], pch = 19, col = h.s.cols.t[1]
+   , xlab = colnames(tips_humm)[1], ylab = colnames(tips_humm)[3]
+   , xlim = xlim, ylim = ylim)
+points(tips_swift[,1], tips_swift[,3], pch = 19, col = h.s.cols.t[2])
+
+xlim <- range(tips_humm[,2], tips_swift[,2])
+ylim <- range(tips_humm[,3], tips_swift[,3])    
+plot(tips_humm[,2], tips_humm[,3], pch = 19, col = h.s.cols.t[1]
+   , xlab = colnames(tips_humm)[2], ylab = colnames(tips_humm)[3]
+   , xlim = xlim, ylim = ylim)
+points(tips_swift[,2], tips_swift[,3], pch = 19, col = h.s.cols.t[2])
+dev.off()
+
+```
+
+
+```{r data for bayestraits, eval=F, echo=F}
+
+dat <- read.csv("All songs complexity parameters nightjars swifts and hummingbirds.csv")
+
+# element types
+out <- lapply(unique(dat$species), function(x){  
+  X <- dat[dat$species == x, ]
+ 
+  data.frame(species = x, elm.types =paste(X$elm.types, collapse = ","))
+})
+
+
+et <- do.call(rbind, out)
+
+write.table(et, "element_types_for_bayestraits.txt", col.names = F, row.names = FALSE, sep = "\t")
+
+# sequence complexity
+
+out <- lapply(unique(dat$species), function(x){  
+  X <- dat[dat$species == x, ]
+ 
+  data.frame(species = x, elm.types =paste(X$sq.complx, collapse = ","))
+})
+
+
+et <- do.call(rbind, out)
+
+write.table(et, "sequence_complexity_for_bayestraits.txt", col.names = F, row.names = FALSE, sep = "\t")
+
+# acoustic space
+
+out <- lapply(unique(dat$species), function(x){  
+  X <- dat[dat$species == x, ]
+ 
+  data.frame(species = x, elm.types =paste(X$acous.spc, collapse = ","))
+})
+
+et <- do.call(rbind, out)
+
+write.table(et, "acoustic_space_for_bayestraits.txt", col.names = F, row.names = FALSE, sep = "\t")
+
+
+# between_song_variation
+
+out <- lapply(unique(dat$species), function(x){  
+  X <- dat[dat$species == x, ]
+ 
+  X <- X[!is.na(X$btwn.song.var), ]
+  
+  data.frame(species = x, elm.types = paste(X$btwn.song.var, collapse = ","))
+})
+
+et <- do.call(rbind, out)
+
+write.table(et, "btwn_song_variation_for_bayestraits.txt", col.names = F, row.names = FALSE, sep = "\t")
+
+
+# between_song_variation imputed
+
+out <- lapply(unique(dat$species), function(x){  
+  X <- dat[dat$species == x, ]
+ 
+  data.frame(species = x, elm.types = paste(X$btwn.song.var.IMP, collapse = ","))
+})
+
+et <- do.call(rbind, out)
+
+write.table(et, "btwn_song_variation_imputed_for_bayestraits.txt", col.names = F, row.names = FALSE, sep = "\t")
+
+
+```
+
