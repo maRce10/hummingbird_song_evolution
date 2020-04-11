@@ -1,0 +1,256 @@
+---
+title: <center><font size="6"><b>Binding trees</b></font></center>
+subtitle: <center><font size="4"><b>Hummingbirds song evolution</b></font></center>
+author: <center><font size="4"><a href="http://marceloarayasalas.weebly.com/">Marcelo Araya-Salas, PhD</a></font></center>
+date: <center>`r format(Sys.Date(), "%d-%m-%Y")`</center>
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+fontsize: 12pt 
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r packages, message=FALSE, warning = FALSE, echo = TRUE, eval = TRUE, include = FALSE}
+
+#clean session
+rm(list = ls())
+
+# unload all non-based packages
+out <- sapply(paste('package:', names(sessionInfo()$otherPkgs), sep = ""), function(x) try(detach(x, unload = FALSE, character.only = TRUE), silent = T))
+
+## add 'developer/' to packages to be installed from github
+x <- c("ape", "phytools", "phangorn", "pbapply", "YuLab-SMU/ggtree", "ggplot2", "viridis")
+
+aa <- lapply(x, function(y) {
+  
+  # get pakage name
+  pkg <- strsplit(y, "/")[[1]]
+  pkg <- pkg[length(pkg)]
+  
+  # check if installed, if not then install 
+  if (!pkg %in% installed.packages()[,"Package"])  {
+
+      if (grepl("/", y))  devtools::install_github(y, force = TRUE) else
+    install.packages(y) 
+    }
+
+  # load package
+  try(require(pkg, character.only = T), silent = T)
+})
+
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+
+knitr::opts_chunk$set(dpi = 58, fig.width = 12) 
+
+```
+
+```{r parameters, eval = TRUE, echo = TRUE}
+
+## complexity parameters 
+all.elm.acou.prm <- read.csv("data/processed/acoustic/Element parameters nighjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+all.elm.acou.prm$species <- gsub(" ", "_", all.elm.acou.prm$Species)
+
+sp.clade <- all.elm.acou.prm[!duplicated(all.elm.acou.prm$species), c("species", "Clade")]
+
+cols <- viridis(10)
+
+```
+
+```{r bind hummer and swift trees, eval = FALSE, echo = TRUE}
+
+## Find the MRCA for swifts and humm.
+prum_tree <- read.nexus(file = "./data/raw/trees/Avian-TimeTree.nex")
+
+plot( prum_tree ); axisPhylo()
+prum_spp <- prum_tree$tip.label
+age_root <- vcv.phylo( prum_tree )[1,1]
+focus <- c("Hemiprocne", "Streptoprocne", "Chaetura", "Topaza", "Phaethornis", "Archilochus")
+focus_id <- sapply(focus, function(y) grep(y, x = prum_spp) )
+focus_spp <- prum_spp[focus_id]
+focus_node_height <- findMRCA(tree = prum_tree, tips = focus_spp, type = "height")
+focus_age <- age_root - focus_node_height ## Age of the MRCA for swifts and hummingbirds.
+
+## Import and bind the two phylogenies.
+swift_trees <- read.tree("data/processed/trees/100_trees_31_swift_species_birdtree.trees")
+capr_trees <- read.tree("data/processed/trees/caprimulgidae_100_trees_birdtree_fix_names.nex")
+humm_trees <- read.tree("data/processed/trees/100_trees_265_hummingbird_species_1_swift.trees")
+humm_trees <- lapply(humm_trees, function(x) drop.tip(phy = x, tip = "Chaetura_pelagica"))
+
+hmm.swft.trees <- pblapply(1:100, function(y){
+  
+  swift_phy <- swift_trees[[y]]
+  humm_phy <- humm_trees[[y]]
+
+  ## Add a root branch to be able to bind the two trees.
+  age_swift <- vcv.phylo( swift_phy )[1,1]
+  age_humm <- vcv.phylo( humm_phy )[1,1]
+  swift_phy$root.edge <- focus_age - age_swift
+  humm_phy$root.edge <- focus_age - age_humm
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+  full_tree <- swift_phy + humm_phy
+
+  return(full_tree)  
+  })
+
+class(hmm.swft.trees) <- "multiPhylo"
+
+#Check
+is.binary.tree(hmm.swft.trees)
+  
+all(sapply(hmm.swft.trees, is.ultrametric.phylo))
+
+#all clades are monophyletic
+all.elm.acou.prm <- all.elm.acou.prm[!duplicated(all.elm.acou.prm$Species), ]
+
+all.elm.acou.prm$species <- gsub(" ", "_", all.elm.acou.prm$species)
+
+# select clades with more than 1 species
+clds <- c("Emeralds", "Coquettes", "Brilliants", "Mangoes", "Hermits", "Bees", "Mtn. Gems", "Topazes")
+
+# all monophyletic
+all(sapply(hmm.swft.trees, function(Y) all(sapply(clds, function(x) is.monophyletic(Y, tips = all.elm.acou.prm$species[all.elm.acou.prm$Clade == x])))))
+
+## Write the full tree to file.
+write.tree(phy = hmm.swft.trees, file = "data/processed/trees/100_trees_swifts_and_hummingbirds.trees")
+
+## consensus tree
+# taken from http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
+mc.swft.tree <- maxCladeCred(swift_trees)
+mc.humm.tree <- maxCladeCred(humm_trees)
+ 
+## Add a root branch to be able to bind the two trees.
+age_swift <- vcv.phylo(mc.swft.tree)[1,1]
+age_humm <- vcv.phylo(mc.humm.tree)[1,1]
+mc.swft.tree$root.edge <- focus_age - age_swift
+mc.humm.tree$root.edge <- focus_age - age_humm
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+hmm.swft.tree <- mc.swft.tree + mc.humm.tree
+
+plot.phylo(hmm.swft.tree, show.tip.label = FALSE)
+
+write.tree(phy = hmm.swft.tree, file = "data/processed/trees/consensus_tree_swifts_and_hummingbirds_max_cred.tree")
+
+```
+
+```{r bind apodiformes and caprimulgidae trees, eval = FALSE, echo = TRUE}
+
+## Find the MRCA for swifts and humm.
+prum_tree <- read.nexus( file = "data/raw/trees/Avian-TimeTree.nex" )
+
+plot( prum_tree ); axisPhylo()
+prum_spp <- prum_tree$tip.label
+age_root <- vcv.phylo( prum_tree )[1,1]
+focus <- c("Hemiprocne", "Streptoprocne", "Chaetura", "Topaza", "Phaethornis", "Archilochus", "Chordeiles", "Caprimulgus")
+focus_id <- sapply(focus, function(y) grep(y, x = prum_spp) )
+focus_spp <- prum_spp[focus_id]
+focus_node_height <- findMRCA(tree = prum_tree, tips = focus_spp, type = "height")
+focus_age <- age_root - focus_node_height ## Age of the MRCA for swifts and hummingbirds.
+
+## Import and bind the two phylogenies.
+apod.trees <- read.tree("data/processed/trees/100_trees_swifts_and_hummingbirds.trees")
+
+capr_trees <- read.tree("data/processed/trees/caprimulgidae_100_trees_birdtree_fix_names.nex")
+
+hmm.swft.cpr.trees <- pblapply(1:100, function(y){
+  
+  capr_phy <- capr_trees[[y]]
+  apod_phy <- apod.trees[[y]]
+
+  ## Add a root branch to be able to bind the two trees.
+  age_capr <- vcv.phylo( capr_phy )[1,1]
+  age_apod <- vcv.phylo( apod_phy )[1,1]
+  apod_phy$root.edge <- focus_age - age_apod
+  capr_phy$root.edge <- focus_age - age_capr
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+  full_tree <- capr_phy + apod_phy
+
+  if (!is.binary(full_tree))
+      full_tree <- multi2di(full_tree)
+  
+  if (!is.ultrametric(full_tree))
+      full_tree <- force.ultrametric(full_tree, method = "nnls")
+    
+  return(full_tree)  
+  })
+
+class(hmm.swft.cpr.trees) <- "multiPhylo"
+
+#Check
+all(is.binary.tree(hmm.swft.cpr.trees))
+  
+all(sapply(hmm.swft.cpr.trees, is.ultrametric.phylo))
+
+## Write the full tree to file.
+write.tree(phy = hmm.swft.cpr.trees, file = "data/processed/trees/100_trees_swifts_hummingbirds_and_nightjars.trees")
+
+## consensus tree
+# taken from http://blog.phytools.org/2016/03/method-to-compute-consensus-edge.html
+mc.apod.tree <- maxCladeCred(apod.trees)
+mc.capr.tree <- maxCladeCred(capr_trees)
+ 
+## Add a root branch to be able to bind the two trees.
+age_apod <- vcv.phylo(mc.apod.tree)[1,1]
+age_capr <- vcv.phylo(mc.capr.tree)[1,1]
+mc.apod.tree$root.edge <- focus_age - age_apod
+mc.capr.tree$root.edge <- focus_age - age_capr
+
+  ## Bind the trees together taking into account the age of the MRCA of the two clades.
+hmm.swft.cpr.tree <- mc.capr.tree + mc.apod.tree
+
+plot.phylo(hmm.swft.cpr.tree, show.tip.label = FALSE)
+
+write.tree(phy = hmm.swft.cpr.tree, file = "data/processed/trees/consensus_tree_swifts_hummingbirds_and_nighjars_max_cred.tree")
+
+```
+
+# plot phylogenies
+
+```{r plot phylos, eval = TRUE, echo = TRUE, fig.width=12, fig.height=12}
+
+# read trees
+hmm.swft.cpr.tree <- read.tree(file = "data/processed/trees/consensus_tree_swifts_hummingbirds_and_nighjars_max_cred.tree")
+
+node.nightjar <- getMRCA(phy = hmm.swft.cpr.tree, tip = sp.clade$species[sp.clade$Clade == "Nightjars"])
+
+node.swift <- getMRCA(phy = hmm.swft.cpr.tree, tip = sp.clade$species[sp.clade$Clade == "Swifts"])
+
+node.hummer <- getMRCA(phy = hmm.swft.cpr.tree, tip = sp.clade$species[!sp.clade$Clade %in% c("Nightjars", "Swifts")])
+
+ggtree(hmm.swft.cpr.tree) + 
+  geom_cladelabel(node = node.nightjar,
+, label="Nightjars", color= cols[3], offset=0, align=TRUE, offset.text = 1, angle = 90, hjust = 0.5) +
+  geom_hilight(node = node.nightjar, fill = cols[3]) +
+    geom_cladelabel(node = node.swift,
+, label="Swifts", color= cols[3], offset=0, align=TRUE, offset.text = 1, angle = 90, hjust = 0.5) +
+  geom_hilight(node = node.swift, fill = cols[6]) +
+      geom_cladelabel(node = node.hummer,
+, label="Hummingbirds", color= cols[3], offset=0, align=TRUE, offset.text = 1, angle = 90, hjust = 0.5) +
+  geom_hilight(node = node.hummer, fill = cols[10])
+
+hmm.swft.cpr.trees <- read.tree("data/processed/trees/100_trees_swifts_hummingbirds_and_nightjars.trees")
+
+ggtree(hmm.swft.cpr.trees) + facet_wrap(~.id, scale = "free", ncol = 10) + 
+    geom_cladelabel(node = node.nightjar,
+, label="Nightjars", color= cols[3], offset=0, align=TRUE, offset.text = 1, angle = 90, hjust = 0.5) +
+  geom_hilight(node = node.nightjar, fill = cols[3]) +
+    geom_cladelabel(node = node.swift,
+, label="Swifts", color= cols[3], offset=0, align=TRUE, offset.text = 1, angle = 90, hjust = 0.5) +
+  geom_hilight(node = node.swift, fill = cols[6]) +
+      geom_cladelabel(node = node.hummer,
+, label="Hummingbirds", color= cols[3], offset=0, align=TRUE, offset.text = 1, angle = 90, hjust = 0.5) +
+  geom_hilight(node = node.hummer, fill = cols[10])
+
+```
+
+

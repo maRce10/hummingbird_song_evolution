@@ -3,8 +3,6 @@
 
 > Unvailing the evolutionary dynamics that generated complex vocalizations in hummingbirds
 
-![Example figure](./img/example_fig.png)
-
 ## Table of contents
 * [General info](#general-info)
 * [Analyses](#Analyses)
@@ -16,6 +14,7 @@
 This project explores the macroevolutionary significance of song learning in hummingbirds from a phylogenetic comparative perspective. The project aim to compare several aspects of vocal complexity evolution between hummingbirds and their non-vocal learning sister groups (Apodidae and Caprimulgidae) in order to isolate evolutionary dynamics potentially related to vocal learning.
 
 ## Analysis
+![Example screenshot](./img/screenshot.png)
 
 
 ## To-do list
