@@ -12,7 +12,7 @@ df <- data.frame(dir = dirname(fls),  file = basename(fls), sizes, full.name = f
 if (any(df$sizes > 99.9))
   df[df$sizes > 99.9, ] else print("all files are smaller than 100MB")
 
-
+# add them to gitignore
 if (any(df$sizes > 99.9)) {
   print('adding large files to .gitignore')
   

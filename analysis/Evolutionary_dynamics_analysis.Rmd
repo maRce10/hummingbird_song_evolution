@@ -199,7 +199,7 @@ saveRDS(simmap_data_3_big_clades, file = "data/processed/trees/simmap_data_3_big
 
 ```
 
-# presentation graphs
+# Presentation graphs
 ```{r vocal learning graph, eval = TRUE, echo = FALSE}
 
 prum_tree <- read.nexus(file = "./data/raw/trees/Avian-TimeTree.nex")
