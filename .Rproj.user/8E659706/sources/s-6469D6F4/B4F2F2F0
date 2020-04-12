@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1586651108862.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "B4F2F2F0",
+    "lastKnownWriteTime" : 1586539422,
+    "last_content_update" : 1586699823630,
+    "path" : "~/Documentos/Github_projects/hummingbird_song_evolution/analysis/Acoustic_parameters_mapped_on_phylogenies.Rmd",
+    "project_path" : "analysis/Acoustic_parameters_mapped_on_phylogenies.Rmd",
+    "properties" : {
+        "chunk_output_type" : "console",
+        "cursorPosition" : "157,31",
+        "scrollLine" : "146"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

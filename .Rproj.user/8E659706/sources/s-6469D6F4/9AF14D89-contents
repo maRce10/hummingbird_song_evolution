@@ -2,22 +2,20 @@
 title: <center><font size="7"><b>Branchwise rates results</b></font></center>
 subtitle: <center><font size="5"><b><a href="https://github.com/maRce10/hummingbird_song_evolution">Hummingbird song evolution</a></b></font></center>
 author: <center><font size="4"><a href="http://marceloarayasalas.weebly.com/">Marcelo Araya-Salas, PhD</a></font></center>
-date: <center>`r format(Sys.Date(), "%d-%m-%Y")`</center>
+#date: <center>`r format(Sys.Date(), "%d-%m-%Y")`</center>
 output:
   html_document:
-    code_folding: hide
     toc: yes
     toc_depth: 3
     toc_float:
-      collapsed: yes
+      collapsed: no
       smooth_scroll: no
 fontsize: 12pt 
 editor_options: 
   chunk_output_type: console
 ---
 
-### Load packages
-```{r packages, message=FALSE, warning = FALSE, eval = TRUE}
+```{r packages, message=FALSE, warning = FALSE, echo = FALSE, eval = TRUE, include = FALSE}
 
 rm(list = ls())
 
@@ -57,11 +55,10 @@ knitr::opts_chunk$set(dpi = 58, fig.width = 14, fig.height = 16)
 
 ```
 
-### Set parameters and read data
-```{r functions and parameters, message = FALSE, warning = FALSE, eval = TRUE}
+```{r functions and parameters, message = FALSE, warning = FALSE, echo = FALSE, eval = TRUE}
 
 # font size of clade labels
-fontsize <- 13
+fontsize <- 15
 
 # edge width
 lwd <- 2
@@ -149,16 +146,13 @@ sp.clade <- song.acoust.param[!duplicated(song.acoust.param$species) , c("specie
 # rename hummers
 sp.clade$maj.clade <- ifelse(sp.clade$Clade %in% c("Nightjars", "Swifts"), sp.clade$Clade, "Hummingbirds")
 
+# MRCAs for major clades
+major.clade.nodes <- sapply(c("Nightjars", "Swifts", "Hummingbirds"), function(x) getMRCA(phy = phy, tip = sp.clade$species[sp.clade$maj.clade == x]))
+
 # all clades Except for Patagona
 all.clade.nodes <- sapply(c("Emeralds", "Coquettes", "Swifts", "Brilliants", "Mangoes", "Hermits", "Nightjars", "Bees", "Mtn. Gems", "Topazes", "Hummingbirds"), function(x) getMRCA(phy = phy, tip = if(x == "Hummingbirds") sp.clade$species[!sp.clade$Clade %in% c("Swifts", "Nightjars")] else sp.clade$species[sp.clade$Clade == x]))
 
 sp.clade.bsv  <- sp.clade[sp.clade$species %in%  phy.btw.sng.vr$tip.label, ]
-
-# all clades Except for Patagona for between song variation
-all.clade.nodes.bsv <- sapply(c("Emeralds", "Coquettes", "Swifts", "Brilliants", "Mangoes", "Hermits", "Nightjars", "Bees", "Mtn. Gems", "Topazes", "Hummingbirds"), function(x) getMRCA(phy = phy.btw.sng.vr, tip = if(x == "Hummingbirds") sp.clade.bsv$species[!sp.clade.bsv$Clade %in% c("Swifts", "Nightjars")] else sp.clade.bsv$species[sp.clade.bsv$Clade == x]))
-
-# MRCAs for major clades
-major.clade.nodes <- sapply(c("Nightjars", "Swifts", "Hummingbirds"), function(x) getMRCA(phy = phy, tip = sp.clade$species[sp.clade$maj.clade == x]))
 
 # MRCAs for major clades for between song variation
 major.clade.nodes.bsv <- sapply(c("Nightjars", "Swifts", "Hummingbirds"), function(x) getMRCA(phy = phy.btw.sng.vr, tip = sp.clade.bsv$species[sp.clade.bsv$maj.clade == x]))
@@ -182,23 +176,22 @@ hmm.clade.nodes.bsv <- hmm.clade.nodes.bsv[order(names(hmm.clade.nodes.bsv))]
 # base ggtree graph major clades  
 gg.maj.clades <- ggtree(phy, ladderize = FALSE, size = lwd) +
   theme_tree2() +  xlim(NA, 150) + 
-  theme(text=element_text(size = 35)) + labs(x = "Millions of years")
-  
+  theme(text=element_text(size = 30))
 
-# add clade labels
+# add color boxes
     for(i in 1:length(all.clade.nodes))
-  gg.maj.clades <- gg.maj.clades + geom_cladelabel(node = all.clade.nodes[i], label = names(all.clade.nodes)[i],   fontsize = fontsize, align=TRUE, barsize = 2, offset = if(names(all.clade.nodes)[i] == "Hummingbirds") 33 else 0.7, color = if(names(all.clade.nodes)[i] == "Hummingbirds") "gray81" else "gray45")
+  gg.maj.clades <- gg.maj.clades + geom_cladelabel(node = all.clade.nodes[i], label = names(all.clade.nodes)[i],   fontsize = fontsize, align=TRUE, barsize = 2, offset = if(names(all.clade.nodes)[i] == "Hummingbirds") 38 else 1, color = if(names(all.clade.nodes)[i] == "Hummingbirds") "gray81" else "gray45")
   
 # gg.maj.clades
 
 # base ggtree graph major clades for between song variation
 gg.maj.clades.bsv <- ggtree(phy.btw.sng.vr, ladderize = FALSE, size = lwd) +
-  theme_tree2() +  xlim(NA, 150) + 
-  theme(text=element_text(size = 35))
+  theme_tree2() +  xlim(NA, 90) + 
+  theme(text=element_text(size = 20))
 
 # add labels
-    for(i in 1:length(all.clade.nodes.bsv))
-  gg.maj.clades.bsv <- gg.maj.clades.bsv + geom_cladelabel(node = all.clade.nodes.bsv[i], label = names(all.clade.nodes.bsv)[i],   fontsize = fontsize, align=TRUE, barsize = 2, offset = if(names(all.clade.nodes.bsv)[i] == "Hummingbirds") 33 else 0.7, color = if(names(all.clade.nodes.bsv)[i] == "Hummingbirds") "gray81" else "gray45")
+    for(i in 1:length(major.clade.nodes.bsv))
+  gg.maj.clades.bsv <- gg.maj.clades.bsv + geom_cladelabel(node = major.clade.nodes.bsv[i], label = names(major.clade.nodes.bsv)[i],   fontsize = fontsize, align=TRUE)
 
 
 # base ggtree graph hummingbird clades  
@@ -252,14 +245,7 @@ gg.hmm.clade.collapse.tree <- gg.hmm.clade.collapse.tree +
 ```
 
 
-# Branchwhise evolutionary rates on song complexity parameters
-
-- Warm colors: significantly faster than background brownian motion rates
-- Warm colors: significantly slower than background brownian motion rates
-- Significance determined as speding >= 95% of time at a rate higher than background
-
-
-```{r branchwise coloring, message = FALSE, warning = FALSE, echo = TRUE, eval = TRUE}
+```{r branchwise coloring, message = FALSE, warning = FALSE, echo = FALSE, eval = TRUE}
 
 ggtrs <- lapply(1:length(branchwise_rates), function(y){
   
@@ -269,55 +255,24 @@ ggtrs <- lapply(1:length(branchwise_rates), function(y){
     
     tips <- strsplit(y, split = ",")[[1]]
     
-    phytemp <- if (X$variable[1] == "Btwn") phy.btw.sng.vr else phy
+    phy <- if (X$variable[1] == "Btwn") phy.btw.sng.vr else phy
     
-    node <- if (length(tips) == 1) which(phytemp$tip == tips) else
-    getMRCA(phy = phytemp, tip = tips)
+    node <- if (length(tips) == 1) which(phy$tip == tips) else
+    getMRCA(phy = phy, tip = tips)
   })
   
-    if (X$variable[1] != "Btwn")
-  gg.maj.clades %<+% X + aes(color=I(rate.color))  else
-    gg.maj.clades.bsv %<+% X + aes(color=I(rate.color))
+  gg.maj.clades %<+% X + aes(color=I(rate.color)) 
   # + ggtitle(X$variable[1])
   
 })
 
 names(ggtrs) <- names(branchwise_rates)
 
-```
-
-
-# Sequence complexity
-
-```{r}
-
-ggtrs$`Sequence complexity`
+ggtrs
 
 ```
 
-# Acoustic space
 
-```{r}
-
-ggtrs$`Acoustic space`
-
-```
-
-# Between song variation
-
-```{r}
-
-ggtrs$`Between song variation`
-
-```
-
-# Number of elements per song
-
-```{r}
-
-ggtrs$`# of element types`
-
-```
 
 ---
 

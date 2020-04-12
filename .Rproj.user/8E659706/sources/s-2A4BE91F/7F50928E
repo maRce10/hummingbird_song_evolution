@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1586711074872.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "19|60|57|0|\n",
+    "hash" : "3679779480",
+    "id" : "7F50928E",
+    "lastKnownWriteTime" : 1586712902,
+    "last_content_update" : 1586712902078,
+    "path" : "~/Documentos/Github_projects/hummingbird_song_evolution/analysis/Branchwise_rates_results.Rmd",
+    "project_path" : "analysis/Branchwise_rates_results.Rmd",
+    "properties" : {
+        "chunk_output_type" : "console",
+        "cursorPosition" : "200,249",
+        "scrollLine" : "190"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
