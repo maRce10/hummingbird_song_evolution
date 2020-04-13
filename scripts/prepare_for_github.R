@@ -27,7 +27,7 @@ if (any(df$sizes > 99.9)) {
 
 system("git add .")
 
-system('git commit -m "brachwise rates rmd"')
+system('git commit -m "brachwise rates html"')
 
 system("git push origin master")
 
