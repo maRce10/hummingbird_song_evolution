@@ -17,10 +17,13 @@ This project explores the macroevolutionary significance of song learning in hum
 
 ## Analysis
 
+* [Binding trees from different sources](https://rpubs.com/marcelo-araya-salas/598340)
+* [Mapping acoustic traits on phylogenies]( https://htmlpreview.github.io/?https://github.com/maRce10/hummingbird_song_evolution/blob/master/analysis/Acoustic_parameters_mapped_on_phylogenies.html)
+* [Branchwise rates](https://rpubs.com/marcelo-araya-salas/598332)
 
 ## To-do list
 
-* Obtain branchwise evolutionary rates
+* Get direccionality of complexiti evolution
 * Compare rates between clades
 * Evaluate evolutionary covariation of rates
 

@@ -1,6 +1,6 @@
 ---
 title: <center><font size="6"><b>Acoustic parameters mapped on phylogenies</b></font></center>
-subtitle: <center><font size="5"><b>Hummingbird song evolution</b></font></center>
+subtitle: <center><font size="5"><b><a href="https://github.com/maRce10/hummingbird_song_evolution">Hummingbird song evolution</a></b></font></center>
 author: <center><font size="4"> Marcelo Araya-Salas</font></center>
 date: <center>`r format(Sys.Date(), "%d-%m-%Y")`</center>
 output:

@@ -274,13 +274,13 @@ div.tocify {
 <font size="6"><b>Binding trees</b></font>
 </center></h1>
 <h3 class="subtitle"><center>
-<font size="4"><b>Hummingbirds song evolution</b></font>
+<font size="5"><b><a href="https://github.com/maRce10/hummingbird_song_evolution">Hummingbird song evolution</a></b></font>
 </center></h3>
 <h4 class="author"><center>
 <font size="4"><a href="http://marceloarayasalas.weebly.com/">Marcelo Araya-Salas, PhD</a></font>
 </center></h4>
 <h4 class="date"><center>
-10-04-2020
+12-04-2020
 </center></h4>
 
 </div>
@@ -309,8 +309,8 @@ focus_age &lt;- age_root - focus_node_height ## Age of the MRCA for swifts and h
 ## Import and bind the two phylogenies.
 swift_trees &lt;- read.tree(&quot;data/processed/trees/100_trees_31_swift_species_birdtree.trees&quot;)
 capr_trees &lt;- read.tree(&quot;data/processed/trees/caprimulgidae_100_trees_birdtree_fix_names.nex&quot;)
-humm_trees &lt;- read.tree( &quot;data/processed/trees/100_trees_265_hummingbird_species_1_swift.trees&quot; )
-humm_trees &lt;- lapply(humm_trees, function(x) drop.tip(phy = x, tip = &quot;Chaetura_pelagica&quot;) )
+humm_trees &lt;- read.tree(&quot;data/processed/trees/100_trees_265_hummingbird_species_1_swift.trees&quot;)
+humm_trees &lt;- lapply(humm_trees, function(x) drop.tip(phy = x, tip = &quot;Chaetura_pelagica&quot;))
 
 hmm.swft.trees &lt;- pblapply(1:100, function(y){
   
