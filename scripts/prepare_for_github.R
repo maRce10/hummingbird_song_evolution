@@ -27,11 +27,13 @@ if (any(df$sizes > 99.9)) {
 
 system("git add .")
 
-system('git commit -m "brachwise rates html"')
+system('git commit -m "update readme"')
 
 system("git push origin master")
 
-  source("./scripts/saveRDSX.R")
+
+### zipping
+source("./scripts/saveRDSX.R")
 
 # save_rdsx(est, rdsx.file = "extended_selection_table_hummingbirds_swifts_nightjars.RDSX", path = "./data/raw/")
 # 

@@ -23,8 +23,9 @@ This project explores the macroevolutionary significance of song learning in hum
 
 ## To-do list
 
+* Evolutionary covariances of complex
 * Get direccionality of complexity during evolution
-* Compare rates between clades
+* Compare rates between clades (see [this link](https://stats.stackexchange.com/questions/130389/bayesian-equivalent-of-two-sample-t-test))
 * Evaluate evolutionary covariation of rates
 
 ## Status

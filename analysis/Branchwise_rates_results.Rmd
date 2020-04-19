@@ -35,7 +35,8 @@ x <- c(
    "phangorn",
    "parallel",
    "pbapply",
-    "cowplot"
+    "cowplot",
+    "coda"
     )
   
 out <- lapply(x, function(y) {
@@ -133,7 +134,7 @@ branchwise_rates <- lapply(xls, function(x) {
   domain <- range(0, 1)
   
   
-  pal_fun <- colorNumeric(palette = "magma", domain = domain, reverse = TRUE)
+  pal_fun <- colorNumeric(palette = "viridis", domain = domain, reverse = TRUE)
   
     # previewColors(pal_fun, seq(min(domain), max(domain), length.out = 30))
 
@@ -324,6 +325,8 @@ ggtrs$`Between song variation`
 ggtrs$`# of element types`
 
 ```
+
+---
 
 # Posterior evolutionary rates per clade
 
@@ -566,6 +569,293 @@ gg.rates$`Between song variation`
 ```{r, warning = FALSE}
 
 gg.rates$`# of element types`
+
+```
+
+---
+
+# Posterior evolutionary correlation between complexity parameters
+
+```{r correlation between single parameters, message = FALSE, warning = FALSE, echo = TRUE, eval = FALSE}
+
+# proof of concept that trimming file share node labels
+# ac_sp_tr <- rate.trees$`Acoustic space`[[1]]
+# 
+# btwn_tr <- rate.trees$`Between song variation`[[1]]
+# 
+# prn_ac_sp_tr <- drop.tip(ac_sp_tr, tip = setdiff(ac_sp_tr$tip.label, btwn_tr$tip.label))
+# 
+# jpeg("trim_phylo.jpeg", width = 1000, height = 5000, pointsize = 20)
+#   par(mar = rep(0, 4), mfrow = c(1, 2))
+#   plot.phylo(btwn_tr, show.tip.label = FALSE, use.edge.length = FALSE)
+#   nodelabels()
+#   
+#   plot.phylo(prn_ac_sp_tr, show.tip.label = FALSE, use.edge.length = FALSE)
+#   nodelabels()
+#   dev.off()
+
+
+
+# read branchwise rates
+trees <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.trees$")
+
+rate.trees <- lapply(trees, read.nexus)
+
+names(rate.trees) <-  c("Acoustic space", "Between song variation", "Sequence complexity", "# of element types")
+
+rate.trees <- rate.trees[c(1, 3, 4, 2)]
+
+# make combinations of 2 parameters at the time
+grd_trees <- t(combn(names(rate.trees), 2))
+
+# get get correlation between complexity 
+evo_cors_l <- pblapply(1:nrow(grd_trees), cl = detectCores() - 1, function(y){
+  
+  # extract 1 bayes traits multiphylo with branch length representing amount of change 
+  bt_tr1 <- rate.trees[[grd_trees[y, 1]]]
+  bt_tr2 <- rate.trees[[grd_trees[y, 2]]]
+  
+    # prune tree if different ntips
+ if (Ntip(bt_tr1[[1]]) != Ntip(bt_tr2[[1]]))
+  {
+    bt_tr1 <- lapply(bt_tr1, drop.tip, tip = setdiff(bt_tr1[[1]]$tip.label, bt_tr2[[1]]$tip.label))
+
+  # get node list depending on number of species
+    node.list <- all.nodes.bsv
+    
+     # get unstransformed tree edge lengths
+    edge_tab <- get_edge_table(phy.btw.sng.vr)
+    # edge_tab <- get_edge_table(drop.tip(phy, tip = setdiff(phy$tip.label, phy.btw.sng.vr$tip.label)))
+    
+    } else { # if both trees have 318 species
+     # get unstransformed tree edge lengths
+    edge_tab <- get_edge_table(phy)
+   
+    # node list
+   node.list <- all.nodes
+    }
+  
+  # make edge rate table template
+  edge_tab_templ <- get_edge_table(bt_tr1[[1]])   
+
+  # change rate column name
+  names(edge_tab_templ)[5] <- "delete"
+  
+  # merge unstransformed and transformed 
+  edge_tab_templ <- merge(edge_tab, edge_tab_templ[, c("parent", "child", "delete")])
+  
+  edge_tab_templ$delete <- NULL
+  
+  # loop over each sub tree to get rates for each branch x tree
+  rates_tr1 <- sapply(bt_tr1, function(z){
+      
+  # edge tab for transformed
+  edge_tab_rates <- get_edge_table(z)   
+
+  # change rate column name
+  names(edge_tab_rates)[5] <- "rate.length"
+  
+  # merge unstransformed and transformed 
+  mrg_edge_tab <- merge(edge_tab_templ, edge_tab_rates[, c("parent", "child", "rate.length")])
+  
+  # calculate rate
+  mrg_edge_tab$rate <- mrg_edge_tab$rate.length / mrg_edge_tab$length   
+  
+  return(mrg_edge_tab$rate) 
+  })
+
+  # rates second tree
+  rates_tr2 <- sapply(bt_tr2, function(z){
+      
+  # edge tab for transformed
+  edge_tab_rates <- get_edge_table(z)   
+
+  # change rate column name
+  names(edge_tab_rates)[5] <- "rate.length"
+  
+  # merge unstransformed and transformed 
+  mrg_edge_tab <- merge(edge_tab_templ, edge_tab_rates[, c("parent", "child", "rate.length")])
+  
+  # calculate rate
+  mrg_edge_tab$rate <- mrg_edge_tab$rate.length / mrg_edge_tab$length  
+  
+  return(mrg_edge_tab$rate)
+  })
+  
+ # sample 1000 tree values randomly for each tree
+ # ang get correlation of log rates
+  cors_clade_l <- lapply(1:length(node.list), function(w)
+  {
+  
+    # select rates for each clade based on nodes
+    rt1 <- rates_tr1[edge_tab_templ$parent %in% node.list[[w]], ]
+    rt2 <- rates_tr2[edge_tab_templ$parent %in% node.list[[w]], ]
+    
+    cors <- sapply(1:10000, function(x)
+     cor(log(rt1[, sample(1:ncol(rt1), 1), drop = TRUE] + 1), log(rt2[, sample(1:ncol(rt2), 1), drop = TRUE] + 1))
+       )
+    
+    return(data.frame(clade = names(node.list)[w], cor = cors))
+    })
+  
+  cors_clade <- do.call(rbind, cors_clade_l)
+  
+  # names(cors_clade) <- names(node.list)
+  
+  cors_df <- data.frame(clade = cors_clade$clade, param1 = grd_trees[y, 1], param2 = grd_trees[y, 2], cor = cors_clade$cor)
+  
+  return(cors_df)
+  })
+
+# put all together in a single data frame
+evo_cors <- do.call(rbind, evo_cors_l)
+
+
+# save as RDS
+saveRDS(evo_cors, "./data/processed/posterior_evolutionary_rate_correlations.RDS")
+
+```
+
+```{r make ggplots correlation of rates, message=FALSE, warning=FALSE}
+
+evo_cors <- readRDS("./data/processed/posterior_evolutionary_rate_correlations.RDS")
+
+evo_cors$variable.pair <- paste0(evo_cors$param1, "-", evo_cors$param2)
+
+evo_cors_3_clades <- evo_cors[evo_cors$clade %in% c("Nightjars", "Swifts", "Hummingbirds"), ]
+
+# remove hummingbirds
+evo_cors <- evo_cors[evo_cors$clade != "Hummingbirds", ]
+
+# for plot have clade as species
+evo_cors_3_clades$species <- as.character(evo_cors_3_clades$clade)
+evo_cors$species <- as.character(evo_cors$clade)
+
+evo_cors$maj.clade <- as.character(ifelse(evo_cors$species %in% c("Nightjars", "Swifts"), evo_cors$species, "Hummingbirds"))
+
+
+gg_cor_rates <- lapply(c(unique(evo_cors$variable.pair), "overall"), function(w){
+
+  # all clades
+  gg.cor.rate <- gg.all.clade.collapse.tree
+ 
+  # get data subset
+  if (w != "overall")
+  dat <- evo_cors[evo_cors$variable.pair == w, ] else
+    dat <- evo_cors
+  
+  # keep only data within 95% quantile
+  dat.l <- lapply(unique(dat$species), function(x){
+    
+    X <- dat[dat$species == x, ] 
+    Z <- X$cor
+  class(Z) <- "mcmc"  
+  hpd <- HPDinterval(Z)
+    
+  Y <- X[X$cor > hpd[1] & X$cor < hpd[2], ]  
+  return(Y)
+    })
+  
+  dat <- do.call(rbind, dat.l)
+  
+  # add facet violin
+  gg.cor.rate <- facet_plot(gg.cor.rate, data = dat, geom = geom_violin, aes(x= cor, group = label, fill = maj.clade), panel = w) +
+      scale_fill_manual(values = cols[c(8, 3, 5)]) +
+    theme(legend.position = "none")
+
+     
+   # 3 major clades
+  gg.cor.rate.3.maj.clades <- gg.major.clade.collapse.tree
+ 
+  # get data subset
+    if (w != "overall")
+  dat <- evo_cors_3_clades[evo_cors_3_clades$variable.pair == w, ] else
+    dat <- evo_cors_3_clades
+  
+  # keep only data within 95% quantile
+  dat.l <- lapply(unique(dat$clade), function(x){
+    
+      X <- dat[dat$clade == x, ] 
+      Z <- X$cor
+      class(Z) <- "mcmc"  
+      hpd <- HPDinterval(Z)
+      Y <- X[X$cor > hpd[1] & X$cor < hpd[2], ]  
+      return(Y)
+        })
+  
+
+  dat <- do.call(rbind, dat.l)
+  
+  # add facet violin
+  gg.cor.rate.3.maj.clades <-
+    facet_plot(gg.cor.rate.3.maj.clades, data = dat, geom = geom_violin, aes(x= cor, group = label, fill = label), panel = w)  +
+        scale_fill_manual(values = cols[c(8, 3, 5)]) + 
+    theme(legend.position = "none")
+  
+ # # plot both together
+  cow_plt <- plot_grid(gg.cor.rate.3.maj.clades, gg.cor.rate, ncol = 2)
+  
+  return(cow_plt)
+  })
+
+names(gg_cor_rates) <- c(unique(evo_cors$variable.pair), "overall")
+
+```
+
+## Acoustic space vs Sequence complexity
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Acoustic space-Sequence complexity`
+
+```
+
+## Acoustic space vs Number of element types
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Acoustic space-# of element types`
+
+```
+
+## Acoustic space vs Between song variation
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Acoustic space-Between song variation`
+  
+```
+
+## Sequence complexity vs Number of element types
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Sequence complexity-# of element types`
+
+```
+
+## Sequence complexity vs Between song variation
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Sequence complexity-Between song variation`
+
+```
+
+## Number of element types vs Between song variation
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`# of element types-Between song variation`
+
+```
+
+
+## Overall correlation between all 4 complexity parameters
+
+```{r, warning = FALSE}
+
+gg_cor_rates$overall
 
 ```
 
