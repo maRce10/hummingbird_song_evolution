@@ -1000,3 +1000,52 @@ remote: Resolving deltas:   0% (0/10)[Kremote: Resolving deltas:  10% (1/10)[
 To github.com:maRce10/hummingbird_song_evolution.git
    bbb11a7..39de5c5  master -> master
 git pushcommit -m "readme update"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_sonng_evolution[00m$ git add .[1Ppushcommit -m "readme update"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"b"[1P"b"r"a"n"c"h"[1P"[1P"[1P"n"w"c"h"i"[1P"[1P"[1P"[1P"c"h"i"[1P"[1P"h"w"i"s"e" "c"[1P"c"o"r"r"e"l"a"t"i"o"n" "r"[1P"[1P"rcorrelation"tcorrelation"[1Pcorrelation"acorrelation"tcorrelation"ecorrelation" correlation"
+[master 9b1f492] branchwise rate correlation
+ 51 files changed, 2724 insertions(+), 9010 deletions(-)
+ rewrite .Rhistory (87%)
+ rewrite .Rproj.user/8E659706/console06/4E1BF097 (72%)
+ rewrite .Rproj.user/8E659706/console06/INDEX001 (87%)
+ delete mode 100644 .Rproj.user/8E659706/sources/per/t/32750B7D
+ delete mode 100644 .Rproj.user/8E659706/sources/per/t/32750B7D-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/per/t/6D30886A
+ delete mode 100644 .Rproj.user/8E659706/sources/per/t/6D30886A-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/per/t/D6A78716
+ delete mode 100644 .Rproj.user/8E659706/sources/per/t/D6A78716-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-2A4BE91F/551AB1C4
+ delete mode 100644 .Rproj.user/8E659706/sources/s-2A4BE91F/551AB1C4-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-2A4BE91F/7F50928E
+ delete mode 100644 .Rproj.user/8E659706/sources/s-2A4BE91F/9E6D81BE-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-2A4BE91F/CD9F7DB8-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-2A4BE91F/EC07653-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-6469D6F4/9AF14D89-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-6469D6F4/B4F2F2F0-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-6469D6F4/B90C5C6F-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-6469D6F4/C49E71D3-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-6469D6F4/CD78F425-contents
+ rename .Rproj.user/8E659706/sources/{s-2A4BE91F/DDBCB784-contents => s-CC37C916/11B91916-contents} (100%)
+ rename .Rproj.user/8E659706/sources/{s-6469D6F4 => s-CC37C916}/2AE57BE7 (95%)
+ rename .Rproj.user/8E659706/sources/{s-6469D6F4 => s-CC37C916}/2AE57BE7-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-2A4BE91F/lock_file => s-CC37C916/39108629-contents} (100%)
+ create mode 100644 .Rproj.user/8E659706/sources/s-CC37C916/88AD590D
+ rename .Rproj.user/8E659706/sources/{s-2A4BE91F/AC02348D-contents => s-CC37C916/88AD590D-contents} (85%)
+ rename .Rproj.user/8E659706/sources/{s-6469D6F4 => s-CC37C916}/9AF14D89 (52%)
+ rename .Rproj.user/8E659706/sources/{s-2A4BE91F/7F50928E-contents => s-CC37C916/9AF14D89-contents} (70%)
+ rename .Rproj.user/8E659706/sources/{s-6469D6F4 => s-CC37C916}/B4F2F2F0 (79%)
+ rename .Rproj.user/8E659706/sources/{s-2A4BE91F/7554516A-contents => s-CC37C916/B4F2F2F0-contents} (100%)
+ rename .Rproj.user/8E659706/sources/{s-6469D6F4 => s-CC37C916}/lock_file (100%)
+ create mode 100644 .Rproj.user/shared/notebooks/A024E516-Acoustic_parameters_mapped_on_phylogenies/1/8E659706D33547DF/chunks.json
+ create mode 100644 .Rproj.user/shared/notebooks/C1D6AF08-Branchwise_rates_results/1/8E659706CC37C916/chunks.json
+ create mode 100644 README.html
+ create mode 100644 data/processed/posterior_evolutionary_rate_correlations.RDS
+ create mode 100644 trim_phylo.jpeg
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_sonng_evolution[00m$ git commit -m "branchwise rate correlation"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K[1Ppush
+Contando objetos: 46, listo.
+Delta compression using up to 4 threads.
+Comprimiendo objetos:   2% (1/41)   Comprimiendo objetos:   4% (2/41)   Comprimiendo objetos:   7% (3/41)   Comprimiendo objetos:   9% (4/41)   Comprimiendo objetos:  12% (5/41)   Comprimiendo objetos:  14% (6/41)   Comprimiendo objetos:  17% (7/41)   Comprimiendo objetos:  19% (8/41)   Comprimiendo objetos:  21% (9/41)   Comprimiendo objetos:  24% (10/41)   Comprimiendo objetos:  26% (11/41)   Comprimiendo objetos:  29% (12/41)   Comprimiendo objetos:  31% (13/41)   Comprimiendo objetos:  34% (14/41)   Comprimiendo objetos:  36% (15/41)   Comprimiendo objetos:  39% (16/41)   Comprimiendo objetos:  41% (17/41)   Comprimiendo objetos:  43% (18/41)   Comprimiendo objetos:  46% (19/41)   Comprimiendo objetos:  48% (20/41)   Comprimiendo objetos:  51% (21/41)   Comprimiendo objetos:  53% (22/41)   Comprimiendo objetos:  56% (23/41)   Comprimiendo objetos:  58% (24/41)   Comprimiendo objetos:  60% (25/41)   Comprimiendo objetos:  63% (26/41)   Comprimiendo objetos:  65% (27/41)   Comprimiendo objetos:  68% (28/41)   Comprimiendo objetos:  70% (29/41)   Comprimiendo objetos:  73% (30/41)   Comprimiendo objetos:  75% (31/41)   Comprimiendo objetos:  78% (32/41)   Comprimiendo objetos:  80% (33/41)   Comprimiendo objetos:  82% (34/41)   Comprimiendo objetos:  85% (35/41)   Comprimiendo objetos:  87% (36/41)   Comprimiendo objetos:  90% (37/41)   Comprimiendo objetos:  92% (38/41)   Comprimiendo objetos:  95% (39/41)   Comprimiendo objetos:  97% (40/41)   Comprimiendo objetos: 100% (41/41)   Comprimiendo objetos: 100% (41/41), listo.
+Escribiendo objetos:   2% (1/46)   Escribiendo objetos:   4% (2/46)   Escribiendo objetos:   6% (3/46)   Escribiendo objetos:   8% (4/46)   Escribiendo objetos:  10% (5/46)   Escribiendo objetos:  13% (6/46)   Escribiendo objetos:  15% (7/46)   Escribiendo objetos:  17% (8/46)   Escribiendo objetos:  19% (9/46)   Escribiendo objetos:  21% (10/46)   Escribiendo objetos:  23% (11/46)   Escribiendo objetos:  26% (12/46)   Escribiendo objetos:  28% (13/46)   Escribiendo objetos:  30% (14/46)   Escribiendo objetos:  32% (15/46)   Escribiendo objetos:  34% (16/46)   Escribiendo objetos:  36% (17/46)   Escribiendo objetos:  39% (18/46)   Escribiendo objetos:  41% (19/46)   Escribiendo objetos:  43% (20/46)   Escribiendo objetos:  45% (21/46)   Escribiendo objetos:  50% (23/46)   Escribiendo objetos:  52% (24/46)   Escribiendo objetos:  54% (25/46)   Escribiendo objetos:  56% (26/46)   Escribiendo objetos:  58% (27/46)   Escribiendo objetos:  60% (28/46)   Escribiendo objetos:  63% (29/46)   Escribiendo objetos:  65% (30/46)   Escribiendo objetos:  67% (31/46)   Escribiendo objetos:  69% (32/46)   Escribiendo objetos:  71% (33/46)   Escribiendo objetos:  73% (34/46)   Escribiendo objetos:  76% (35/46)   Escribiendo objetos:  78% (36/46)   Escribiendo objetos:  80% (37/46)   Escribiendo objetos:  80% (37/46), 1.30 MiB | 938.00 KiB/s   Escribiendo objetos:  80% (37/46), 1.91 MiB | 812.00 KiB/s   Escribiendo objetos:  84% (39/46), 1.91 MiB | 812.00 KiB/s   Escribiendo objetos:  86% (40/46), 1.91 MiB | 812.00 KiB/s   Escribiendo objetos:  89% (41/46), 1.91 MiB | 812.00 KiB/s   Escribiendo objetos:  91% (42/46), 1.91 MiB | 812.00 KiB/s   Escribiendo objetos:  91% (42/46), 2.53 MiB | 762.00 KiB/s   Escribiendo objetos:  91% (42/46), 3.16 MiB | 733.00 KiB/s   Escribiendo objetos:  91% (42/46), 3.77 MiB | 714.00 KiB/s   Escribiendo objetos:  91% (42/46), 4.40 MiB | 703.00 KiB/s   Escribiendo objetos:  91% (42/46), 5.02 MiB | 693.00 KiB/s   Escribiendo objetos:  91% (42/46), 5.64 MiB | 687.00 KiB/s   Escribiendo objetos:  91% (42/46), 6.26 MiB | 681.00 KiB/s   Escribiendo objetos:  91% (42/46), 6.88 MiB | 637.00 KiB/s   Escribiendo objetos:  93% (43/46), 6.88 MiB | 637.00 KiB/s   Escribiendo objetos:  95% (44/46), 6.88 MiB | 637.00 KiB/s   Escribiendo objetos:  97% (45/46), 6.88 MiB | 637.00 KiB/s   Escribiendo objetos: 100% (46/46), 6.88 MiB | 637.00 KiB/s   Escribiendo objetos: 100% (46/46), 7.21 MiB | 709.00 KiB/s, listo.
+Total 46 (delta 14), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/14)[Kremote: Resolving deltas:   7% (1/14)[Kremote: Resolving deltas:  14% (2/14)[Kremote: Resolving deltas:  21% (3/14)[Kremote: Resolving deltas:  28% (4/14)[Kremote: Resolving deltas:  35% (5/14)[Kremote: Resolving deltas:  42% (6/14)[Kremote: Resolving deltas:  50% (7/14)[Kremote: Resolving deltas:  57% (8/14)[Kremote: Resolving deltas:  64% (9/14)[Kremote: Resolving deltas:  71% (10/14)[Kremote: Resolving deltas:  78% (11/14)[Kremote: Resolving deltas:  85% (12/14)[Kremote: Resolving deltas:  92% (13/14)[Kremote: Resolving deltas: 100% (14/14)[Kremote: Resolving deltas: 100% (14/14), completed with 12 local objects.[K
+To github.com:maRce10/hummingbird_song_evolution.git
+   1dc44eb..9b1f492  master -> master
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_sonng_evolution[00m$ git pushcommit -m "branchwise rate correlation"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K

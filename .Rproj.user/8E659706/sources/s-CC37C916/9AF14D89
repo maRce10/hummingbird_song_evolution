@@ -4,17 +4,17 @@
     "created" : 1586642273928.000,
     "dirty" : false,
     "encoding" : "UTF-8",
-    "folds" : "19|60|62|0|\n268|86|293|0|\n298|23|302|0|\n306|23|310|0|\n314|23|318|0|\n322|23|326|0|\n332|88|396|0|\n398|96|462|0|\n464|101|539|0|\n544|23|548|0|\n552|23|556|0|\n560|23|564|0|\n568|23|572|0|\n578|105|716|0|\n718|70|802|0|\n",
-    "hash" : "1687572656",
+    "folds" : "19|60|62|0|\n65|78|266|0|\n277|86|302|0|\n307|23|311|0|\n315|23|319|0|\n323|23|327|0|\n331|23|335|0|\n358|88|426|0|\n428|96|494|0|\n496|101|579|0|\n592|23|596|0|\n608|23|612|0|\n635|105|773|0|\n775|70|860|0|\n",
+    "hash" : "1962102946",
     "id" : "9AF14D89",
-    "lastKnownWriteTime" : 1587337179,
-    "last_content_update" : 1587337179172,
+    "lastKnownWriteTime" : 1587356532,
+    "last_content_update" : 1587356532524,
     "path" : "~/Documentos/Github_projects/hummingbird_song_evolution/analysis/Branchwise_rates_results.Rmd",
     "project_path" : "analysis/Branchwise_rates_results.Rmd",
     "properties" : {
         "chunk_output_type" : "console",
-        "cursorPosition" : "327,0",
-        "scrollLine" : "267"
+        "cursorPosition" : "911,53",
+        "scrollLine" : "893"
     },
     "relative_order" : 2,
     "source_on_save" : false,
