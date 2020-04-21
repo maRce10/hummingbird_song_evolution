@@ -1,74 +1,4 @@
 
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Eutoxeres-aquila-ML80852-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Eutoxeres-aquila-ML80852-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Eutoxeres-aquila-ML80852-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Eutoxeres-condamini-223016-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Eutoxeres-condamini-41686-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Eutoxeres-condamini-41686-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-aeneus-11674-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-aeneus-275241-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-aeneus-ML184786-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-aeneus-ML184786-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-dohrnii-326169-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-dohrnii-356160-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-106283-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-106283-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-16811-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-223549-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p7.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p8.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Glaucis-hirsutus-BRL0092-p9.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-aethopygus-149950-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-aethopygus-149950-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-aethopygus-36955-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-aethopygus-91208-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-110638-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-127603-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-148052-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-148052-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-244814-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-244814-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-244814-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-244815-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-244815-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-244815-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-343326-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-343326-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-343326-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-343326-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-343326-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-78842-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-FLMNH16251-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-FLMNH16251-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-anthophilus-FLMNH16251-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-atrimentalis-127604-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-atrimentalis-ML190164-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-atrimentalis-ML190164-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-augusti-22138-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-augusti-407865-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-augusti-ML68832-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-augusti-ML68832-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-augusti-ML68834-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-394429-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-416544-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-416544-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-47431-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-56751-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-56751-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-bourcieri-56751-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-15607-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-211682-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-21603-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-232804-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-232804-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-232820-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-304584-p1.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-304584-p2.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-304584-p3.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-340958-p1.jpeg
@@ -1049,3 +979,24 @@ remote: Resolving deltas:   0% (0/14)[Kremote: Resolving deltas:   7% (1/14)[
 To github.com:maRce10/hummingbird_song_evolution.git
    1dc44eb..9b1f492  master -> master
 ]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_sonng_evolution[00m$ git pushcommit -m "branchwise rate correlation"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_sonng_evolution[00m$ git add .[1Ppushcommit -m "branchwise rate correlation" " [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cu""p"d"a"t"e"
+[master 9ebe068] branchwise rate correlation update
+ 16 files changed, 1693 insertions(+), 78 deletions(-)
+ create mode 100644 .Rproj.user/8E659706/sources/prop/C3876218
+ create mode 100644 .Rproj.user/8E659706/sources/s-CC37C916/24E6EC22-contents
+ create mode 100644 .Rproj.user/8E659706/sources/s-CC37C916/F993FA9-contents
+ create mode 100644 analysis/rsconnect/documents/Branchwise_rates_results.Rmd/rpubs.com/rpubs/Publish Document.dcf
+ rewrite data/processed/posterior_evolutionary_rates_per_clade.RDS (90%)
+ rewrite data/processed/posterior_evolutionary_rates_per_clade_3_major_clades.RDS (97%)
+ rewrite trim_phylo.jpeg (91%)
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_sonng_evolution[00m$ git commit -m "branchwise rate correlation uppdate"[A[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1Ppushcommit -m "branchwise rate correlation"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cpush[K
+Contando objetos: 32, listo.
+Delta compression using up to 4 threads.
+Comprimiendo objetos:   3% (1/28)   Comprimiendo objetos:   7% (2/28)   Comprimiendo objetos:  10% (3/28)   Comprimiendo objetos:  14% (4/28)   Comprimiendo objetos:  17% (5/28)   Comprimiendo objetos:  21% (6/28)   Comprimiendo objetos:  25% (7/28)   Comprimiendo objetos:  28% (8/28)   Comprimiendo objetos:  32% (9/28)   Comprimiendo objetos:  35% (10/28)   Comprimiendo objetos:  39% (11/28)   Comprimiendo objetos:  42% (12/28)   Comprimiendo objetos:  46% (13/28)   Comprimiendo objetos:  50% (14/28)   Comprimiendo objetos:  53% (15/28)   Comprimiendo objetos:  57% (16/28)   Comprimiendo objetos:  60% (17/28)   Comprimiendo objetos:  64% (18/28)   Comprimiendo objetos:  67% (19/28)   Comprimiendo objetos:  71% (20/28)   Comprimiendo objetos:  75% (21/28)   Comprimiendo objetos:  78% (22/28)   Comprimiendo objetos:  82% (23/28)   Comprimiendo objetos:  85% (24/28)   Comprimiendo objetos:  89% (25/28)   Comprimiendo objetos:  92% (26/28)   Comprimiendo objetos:  96% (27/28)   Comprimiendo objetos: 100% (28/28)   Comprimiendo objetos: 100% (28/28), listo.
+Escribiendo objetos:   3% (1/32)   Escribiendo objetos:   6% (2/32)   Escribiendo objetos:   9% (3/32)   Escribiendo objetos:  12% (4/32)   Escribiendo objetos:  15% (5/32)   Escribiendo objetos:  18% (6/32)   Escribiendo objetos:  21% (7/32)   Escribiendo objetos:  25% (8/32)   Escribiendo objetos:  28% (9/32)   Escribiendo objetos:  31% (10/32)   Escribiendo objetos:  34% (11/32)   Escribiendo objetos:  37% (12/32)   Escribiendo objetos:  40% (13/32)   Escribiendo objetos:  43% (14/32)   Escribiendo objetos:  46% (15/32)   Escribiendo objetos:  50% (16/32)   Escribiendo objetos:  53% (17/32)   Escribiendo objetos:  56% (18/32)   Escribiendo objetos:  59% (19/32)   Escribiendo objetos:  62% (20/32)   Escribiendo objetos:  62% (20/32), 1.30 MiB | 891.00 KiB/s   Escribiendo objetos:  62% (20/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  65% (21/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  68% (22/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  71% (23/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  75% (24/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  78% (25/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  81% (26/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  84% (27/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  87% (28/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  90% (29/32), 1.91 MiB | 831.00 KiB/s   Escribiendo objetos:  90% (29/32), 2.54 MiB | 777.00 KiB/s   Escribiendo objetos:  93% (30/32), 2.54 MiB | 777.00 KiB/s   Escribiendo objetos:  96% (31/32), 2.54 MiB | 777.00 KiB/s   Escribiendo objetos:  96% (31/32), 3.16 MiB | 744.00 KiB/s   Escribiendo objetos: 100% (32/32), 3.16 MiB | 744.00 KiB/s   Escribiendo objetos: 100% (32/32), 3.32 MiB | 783.00 KiB/s, listo.
+Total 32 (delta 14), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/14)[Kremote: Resolving deltas:   7% (1/14)[Kremote: Resolving deltas:  14% (2/14)[Kremote: Resolving deltas:  21% (3/14)[Kremote: Resolving deltas:  28% (4/14)[Kremote: Resolving deltas:  35% (5/14)[Kremote: Resolving deltas:  42% (6/14)[Kremote: Resolving deltas:  50% (7/14)[Kremote: Resolving deltas:  57% (8/14)[Kremote: Resolving deltas:  64% (9/14)[Kremote: Resolving deltas:  71% (10/14)[Kremote: Resolving deltas:  78% (11/14)[Kremote: Resolving deltas:  85% (12/14)[Kremote: Resolving deltas:  92% (13/14)[Kremote: Resolving deltas: 100% (14/14)[Kremote: Resolving deltas: 100% (14/14), completed with 14 local objects.[K
+To github.com:maRce10/hummingbird_song_evolution.git
+   9b1f492..9ebe068  master -> master
+[K[A]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git pushcommit -m "readme update"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
