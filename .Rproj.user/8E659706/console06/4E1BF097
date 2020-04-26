@@ -1,31 +1,4 @@
 
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-304584-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-304584-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-340958-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-340958-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-348835-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-374225-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-374225-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-383229-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-383229-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-391830-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-416012-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-eurynome-55599-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-148246-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-148246-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-95768-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-95768-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-95768-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML128094-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML128094-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML128094-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p7.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML40207-p8.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML52930-p1.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-griseogularis-ML52930-p2.jpeg
@@ -1000,3 +973,30 @@ remote: Resolving deltas:   0% (0/14)[Kremote: Resolving deltas:   7% (1/14)[
 To github.com:maRce10/hummingbird_song_evolution.git
    9b1f492..9ebe068  master -> master
 [K[A]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git pushcommit -m "readme update"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git add .[1Ppushcommit -m "readme update"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"b"[1P"e"v"o"l"u"t"i"o"n"a"r" "[1P"y" "i"n"t"e"g"r"a"t"i"o"n"
+[master 6481a1b] evolutionary integration
+ 19 files changed, 34 insertions(+), 108 deletions(-)
+ rewrite .Rproj.user/8E659706/console06/INDEX001 (87%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/11B91916-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/24E6EC22-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/2AE57BE7 (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/2AE57BE7-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/39108629-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/88AD590D (79%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/88AD590D-contents (87%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/9AF14D89 (93%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/9AF14D89-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/B4F2F2F0-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/F993FA9-contents (100%)
+ rename .Rproj.user/8E659706/sources/{s-CC37C916 => s-146B4AFD}/lock_file (100%)
+ delete mode 100644 .Rproj.user/8E659706/sources/s-CC37C916/B4F2F2F0
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git commit -m "evolutionary integration"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K[1Ppushadd .[1Ppush
+Contando objetos: 16, listo.
+Delta compression using up to 4 threads.
+Comprimiendo objetos:   6% (1/16)   Comprimiendo objetos:  12% (2/16)   Comprimiendo objetos:  18% (3/16)   Comprimiendo objetos:  25% (4/16)   Comprimiendo objetos:  31% (5/16)   Comprimiendo objetos:  37% (6/16)   Comprimiendo objetos:  43% (7/16)   Comprimiendo objetos:  50% (8/16)   Comprimiendo objetos:  56% (9/16)   Comprimiendo objetos:  62% (10/16)   Comprimiendo objetos:  68% (11/16)   Comprimiendo objetos:  75% (12/16)   Comprimiendo objetos:  81% (13/16)   Comprimiendo objetos:  87% (14/16)   Comprimiendo objetos:  93% (15/16)   Comprimiendo objetos: 100% (16/16)   Comprimiendo objetos: 100% (16/16), listo.
+Escribiendo objetos:   6% (1/16)   Escribiendo objetos:  12% (2/16)   Escribiendo objetos:  18% (3/16)   Escribiendo objetos:  25% (4/16)   Escribiendo objetos:  31% (5/16)   Escribiendo objetos:  37% (6/16)   Escribiendo objetos:  43% (7/16)   Escribiendo objetos:  50% (8/16)   Escribiendo objetos:  56% (9/16)   Escribiendo objetos:  62% (10/16)   Escribiendo objetos:  68% (11/16)   Escribiendo objetos:  75% (12/16)   Escribiendo objetos:  81% (13/16)   Escribiendo objetos:  87% (14/16)   Escribiendo objetos:  93% (15/16)   Escribiendo objetos: 100% (16/16)   Escribiendo objetos: 100% (16/16), 3.74 KiB | 956.00 KiB/s, listo.
+Total 16 (delta 7), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/7)[Kremote: Resolving deltas:  14% (1/7)[Kremote: Resolving deltas:  28% (2/7)[Kremote: Resolving deltas:  42% (3/7)[Kremote: Resolving deltas:  57% (4/7)[Kremote: Resolving deltas:  71% (5/7)[Kremote: Resolving deltas:  85% (6/7)[Kremote: Resolving deltas: 100% (7/7)[Kremote: Resolving deltas: 100% (7/7), completed with 7 local objects.[K
+To github.com:maRce10/hummingbird_song_evolution.git
+   9ebe068..6481a1b  master -> master
+git push origin master[C[C[C[C[C[C[C[C[C[C[C[C[CR[Kgit pushcommit -m "evolutionary integration"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K

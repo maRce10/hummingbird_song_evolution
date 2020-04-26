@@ -1,0 +1,14 @@
+---
+title: "Untitled"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+
+library("devtools")
+install_github("rgriff23/btw")
+library("btw")
+
+```
