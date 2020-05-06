@@ -24,7 +24,7 @@ rm(list = ls())
 out <- sapply(paste('package:', names(sessionInfo()$otherPkgs), sep = ""), function(x) try(detach(x, unload = FALSE, character.only = TRUE), silent = T))
 
 ## add 'developer/' to packages to be installed from github
-x <- c("OUwie","geomorph", "mvMORPH", "Caetanods/ratematrix", "ggplot2", "viridis",  "kableExtra", "ape", "phytools", "phangorn", "pbapply", "tidyr", "YuLab-SMU/ggtree", "parallel",
+x <- c("OUwie","geomorph", "mvMORPH", "Caetanods/ratematrix", "ggplot2", "viridis",  "kableExtra", "ape", "phytools", "phangorn", "pbapply", "tidyr", "YuLab-SMU/ggtree", "parallel", "adephylo",
        "MCMCglmm", "spatstat", "raster", "adehabitatHR")
 
 aa <- lapply(x, function(y) {
@@ -1789,6 +1789,4 @@ et <- do.call(rbind, out)
 
 write.table(et, "btwn_song_variation_imputed_for_bayestraits.txt", col.names = F, row.names = FALSE, sep = "\t")
 
-
 ```
-

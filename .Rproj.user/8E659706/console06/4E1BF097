@@ -1000,3 +1000,151 @@ remote: Resolving deltas:   0% (0/8)[Kremote: Resolving deltas:  12% (1/8)[K
 To github.com:maRce10/hummingbird_song_evolution.git
    6481a1b..7851309  master -> master
 Rgit pushcommit -m "1 sound file"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[K
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git add .R[Kgit pushcommit -m "1 sound file"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"p"a"c"k"r"a"t" "a"d"d"e"d"
+[master db22625] packrat added
+ 143 files changed, 699 insertions(+), 1303 deletions(-)
+ rewrite .Rproj.user/8E659706/console06/INDEX001 (88%)
+ create mode 100644 .Rproj.user/8E659706/pcs/debug-breakpoints.pper
+ create mode 100644 .Rproj.user/8E659706/sources/prop/647E1A0C
+ create mode 100644 .Rproj.user/8E659706/sources/prop/81B89FEC
+ create mode 100644 .Rproj.user/8E659706/sources/s-ADE78D5C/80A6E901-contents
+ create mode 100644 .Rproj.user/8E659706/sources/s-ADE78D5C/85A1F4B1-contents
+ rename .Rproj.user/8E659706/sources/{s-B31039FC => s-ADE78D5C}/lock_file (100%)
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/2AE57BE7
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/2AE57BE7-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/88AD590D
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/88AD590D-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/9AF14D89
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/9AF14D89-contents
+ delete mode 100644 .Rproj.user/8E659706/sources/s-B31039FC/E9838FA7
+ rename .Rproj.user/{8E659706/unsaved-notebooks/E9838FA7/1 => shared/notebooks/6DF25C6-testing_btw_TEMP/1/s}/chunks.json (100%)
+ create mode 100644 packrat/packrat.lock
+ create mode 100644 packrat/src/BH/BH_1.69.0-1.tar.gz
+ create mode 100644 packrat/src/BiocManager/BiocManager_1.30.10.tar.gz
+ create mode 100644 packrat/src/DT/DT_0.10.tar.gz
+ create mode 100644 packrat/src/R6/R6_2.4.1.tar.gz
+ create mode 100644 packrat/src/RColorBrewer/RColorBrewer_1.1-2.tar.gz
+ create mode 100644 packrat/src/Rcpp/Rcpp_1.0.3.tar.gz
+ create mode 100644 packrat/src/ape/ape_5.3.tar.gz
+ create mode 100644 packrat/src/askpass/askpass_1.1.tar.gz
+ create mode 100644 packrat/src/assertthat/assertthat_0.2.1.tar.gz
+ create mode 100644 packrat/src/backports/backports_1.1.5.tar.gz
+ create mode 100644 packrat/src/base64enc/base64enc_0.1-3.tar.gz
+ create mode 100644 packrat/src/brew/brew_1.0-6.tar.gz
+ create mode 100644 packrat/src/btw/34eb191d7c2459fba2e716aed037f657c9e3c10e.tar.gz
+ create mode 100644 packrat/src/callr/callr_3.3.2.tar.gz
+ create mode 100644 packrat/src/cli/cli_1.1.0.tar.gz
+ create mode 100644 packrat/src/clipr/clipr_0.7.0.tar.gz
+ create mode 100644 packrat/src/clisymbols/clisymbols_1.2.0.tar.gz
+ create mode 100644 packrat/src/colorspace/colorspace_1.4-1.tar.gz
+ create mode 100644 packrat/src/commonmark/commonmark_1.7.tar.gz
+ create mode 100644 packrat/src/covr/covr_3.3.2.tar.gz
+ create mode 100644 packrat/src/crayon/crayon_1.3.4.tar.gz
+ create mode 100644 packrat/src/crosstalk/crosstalk_1.0.0.tar.gz
+ create mode 100644 packrat/src/curl/curl_4.2.tar.gz
+ create mode 100644 packrat/src/desc/desc_1.2.0.tar.gz
+ create mode 100644 packrat/src/devtools/devtools_2.2.1.tar.gz
+ create mode 100644 packrat/src/digest/digest_0.6.22.tar.gz
+ create mode 100644 packrat/src/dplyr/dplyr_0.8.3.tar.gz
+ create mode 100644 packrat/src/ellipsis/ellipsis_0.3.0.tar.gz
+ create mode 100644 packrat/src/evaluate/evaluate_0.14.tar.gz
+ create mode 100644 packrat/src/fansi/fansi_0.4.0.tar.gz
+ create mode 100644 packrat/src/fastmap/fastmap_1.0.1.tar.gz
+ create mode 100644 packrat/src/fs/fs_1.3.1.tar.gz
+ create mode 100644 packrat/src/ggplot2/ggplot2_3.3.0.tar.gz
+ create mode 100644 packrat/src/ggtree/670ec6afe8d7b592712f9df3a19c5ec28bf41b76.tar.gz
+ create mode 100644 packrat/src/gh/gh_1.0.1.tar.gz
+ create mode 100644 packrat/src/git2r/git2r_0.26.1.tar.gz
+ create mode 100644 packrat/src/glue/glue_1.3.1.tar.gz
+ create mode 100644 packrat/src/gridExtra/gridExtra_2.3.tar.gz
+ create mode 100644 packrat/src/gtable/gtable_0.3.0.tar.gz
+ create mode 100644 packrat/src/highr/highr_0.8.tar.gz
+ create mode 100644 packrat/src/htmltools/htmltools_0.4.0.tar.gz
+ create mode 100644 packrat/src/htmlwidgets/htmlwidgets_1.5.1.tar.gz
+ create mode 100644 packrat/src/httpuv/httpuv_1.5.2.tar.gz
+ create mode 100644 packrat/src/httr/httr_1.4.1.tar.gz
+ create mode 100644 packrat/src/ini/ini_0.3.1.tar.gz
+ create mode 100644 packrat/src/isoband/isoband_0.2.0.tar.gz
+ create mode 100644 packrat/src/jsonlite/jsonlite_1.6.tar.gz
+ create mode 100644 packrat/src/knitr/knitr_1.28.tar.gz
+ create mode 100644 packrat/src/labeling/labeling_0.3.tar.gz
+ create mode 100644 packrat/src/later/later_1.0.0.tar.gz
+ create mode 100644 packrat/src/lazyeval/lazyeval_0.2.2.tar.gz
+ create mode 100644 packrat/src/lifecycle/lifecycle_0.1.0.tar.gz
+ create mode 100644 packrat/src/magrittr/magrittr_1.5.tar.gz
+ create mode 100644 packrat/src/markdown/markdown_1.1.tar.gz
+ create mode 100644 packrat/src/memoise/memoise_1.1.0.tar.gz
+ create mode 100644 packrat/src/mime/mime_0.9.tar.gz
+ create mode 100644 packrat/src/munsell/munsell_0.5.0.tar.gz
+ create mode 100644 packrat/src/openssl/openssl_1.4.1.tar.gz
+ create mode 100644 packrat/src/packrat/packrat_0.5.0.tar.gz
+ create mode 100644 packrat/src/pillar/pillar_1.4.2.tar.gz
+ create mode 100644 packrat/src/pkgbuild/pkgbuild_1.0.6.tar.gz
+ create mode 100644 packrat/src/pkgconfig/pkgconfig_2.0.3.tar.gz
+ create mode 100644 packrat/src/pkgload/pkgload_1.0.2.tar.gz
+ create mode 100644 packrat/src/plogr/plogr_0.2.0.tar.gz
+ create mode 100644 packrat/src/praise/praise_1.0.0.tar.gz
+ create mode 100644 packrat/src/prettyunits/prettyunits_1.0.2.tar.gz
+ create mode 100644 packrat/src/processx/processx_3.4.1.tar.gz
+ create mode 100644 packrat/src/promises/promises_1.1.0.tar.gz
+ create mode 100644 packrat/src/ps/ps_1.3.0.tar.gz
+ create mode 100644 packrat/src/purrr/purrr_0.3.3.tar.gz
+ create mode 100644 packrat/src/rcmdcheck/rcmdcheck_1.3.3.tar.gz
+ create mode 100644 packrat/src/remotes/remotes_2.1.0.tar.gz
+ create mode 100644 packrat/src/rex/rex_1.1.2.tar.gz
+ create mode 100644 packrat/src/rlang/rlang_0.4.1.tar.gz
+ create mode 100644 packrat/src/rmarkdown/rmarkdown_1.17.tar.gz
+ create mode 100644 packrat/src/roxygen2/roxygen2_7.0.0.tar.gz
+ create mode 100644 packrat/src/rprojroot/rprojroot_1.3-2.tar.gz
+ create mode 100644 packrat/src/rstudioapi/rstudioapi_0.10.tar.gz
+ create mode 100644 packrat/src/rvcheck/rvcheck_0.1.8.tar.gz
+ create mode 100644 packrat/src/rversions/rversions_2.0.0.tar.gz
+ create mode 100644 packrat/src/scales/scales_1.0.0.tar.gz
+ create mode 100644 packrat/src/sessioninfo/sessioninfo_1.1.1.tar.gz
+ create mode 100644 packrat/src/shiny/shiny_1.4.0.tar.gz
+ create mode 100644 packrat/src/sourcetools/sourcetools_0.1.7.tar.gz
+ create mode 100644 packrat/src/stringi/stringi_1.4.6.tar.gz
+ create mode 100644 packrat/src/stringr/stringr_1.4.0.tar.gz
+ create mode 100644 packrat/src/sys/sys_3.3.tar.gz
+ create mode 100644 packrat/src/testthat/testthat_2.3.0.tar.gz
+ create mode 100644 packrat/src/tibble/tibble_2.1.3.tar.gz
+ create mode 100644 packrat/src/tidyr/tidyr_1.0.0.tar.gz
+ create mode 100644 packrat/src/tidyselect/tidyselect_0.2.5.tar.gz
+ create mode 100644 packrat/src/tidytree/tidytree_0.3.2.tar.gz
+ create mode 100644 packrat/src/tinytex/tinytex_0.17.tar.gz
+ create mode 100644 packrat/src/treeio/treeio_1.10.0.tar.gz
+ create mode 100644 packrat/src/usethis/usethis_1.5.1.tar.gz
+ create mode 100644 packrat/src/utf8/utf8_1.1.4.tar.gz
+ create mode 100644 packrat/src/vctrs/vctrs_0.2.0.tar.gz
+ create mode 100644 packrat/src/viridis/viridis_0.5.1.tar.gz
+ create mode 100644 packrat/src/viridisLite/viridisLite_0.3.0.tar.gz
+ create mode 100644 packrat/src/whisker/whisker_0.4.tar.gz
+ create mode 100644 packrat/src/withr/withr_2.1.2.tar.gz
+ create mode 100644 packrat/src/xfun/xfun_0.12.tar.gz
+ create mode 100644 packrat/src/xml2/xml2_1.2.2.tar.gz
+ create mode 100644 packrat/src/xopen/xopen_1.0.0.tar.gz
+ create mode 100644 packrat/src/xtable/xtable_1.8-4.tar.gz
+ create mode 100644 packrat/src/yaml/yaml_2.2.1.tar.gz
+ create mode 100644 packrat/src/zeallot/zeallot_0.1.0.tar.gz
+ rename {analysis => scripts}/Acoustic_analysis.Rmd (100%)
+ rename {analysis => scripts}/Acoustic_parameters_mapped_on_phylogenies.Rmd (100%)
+ rename {analysis => scripts}/Acoustic_parameters_mapped_on_phylogenies.html (100%)
+ rename {analysis => scripts}/Binding_trees.Rmd (100%)
+ rename {analysis => scripts}/Binding_trees.html (100%)
+ rename {analysis => scripts}/Branchwise_rates_results.Rmd (100%)
+ rename {analysis => scripts}/Branchwise_rates_results.html (100%)
+ rename {analysis => scripts}/Evolutionary_dynamics_analysis.Rmd (100%)
+ rename {analysis => scripts}/rsconnect/documents/Binding_trees.Rmd/rpubs.com/rpubs/Document.dcf (100%)
+ rename {analysis => scripts}/rsconnect/documents/Branchwise_rates_results.Rmd/rpubs.com/rpubs/Document.dcf (100%)
+ rename {analysis => scripts}/rsconnect/documents/Branchwise_rates_results.Rmd/rpubs.com/rpubs/Publish Document.dcf (100%)
+ rename .Rproj.user/8E659706/sources/s-B31039FC/E9838FA7-contents => scripts/testing_btw_TEMP.Rmd (100%)
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git commit -m "packrat added"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cadd .[KR[Kgit push
+Contando objetos: 244, listo.
+Delta compression using up to 4 threads.
+Comprimiendo objetos:   0% (1/154)   Comprimiendo objetos:   1% (2/154)   Comprimiendo objetos:   2% (4/154)   Comprimiendo objetos:   3% (5/154)   Comprimiendo objetos:   4% (7/154)   Comprimiendo objetos:   5% (8/154)   Comprimiendo objetos:   6% (10/154)   Comprimiendo objetos:   7% (11/154)   Comprimiendo objetos:   8% (13/154)   Comprimiendo objetos:   9% (14/154)   Comprimiendo objetos:  10% (16/154)   Comprimiendo objetos:  11% (17/154)   Comprimiendo objetos:  12% (19/154)   Comprimiendo objetos:  13% (21/154)   Comprimiendo objetos:  14% (22/154)   Comprimiendo objetos:  15% (24/154)   Comprimiendo objetos:  16% (25/154)   Comprimiendo objetos:  17% (27/154)   Comprimiendo objetos:  18% (28/154)   Comprimiendo objetos:  19% (30/154)   Comprimiendo objetos:  20% (31/154)   Comprimiendo objetos:  21% (33/154)   Comprimiendo objetos:  22% (34/154)   Comprimiendo objetos:  23% (36/154)   Comprimiendo objetos:  24% (37/154)   Comprimiendo objetos:  25% (39/154)   Comprimiendo objetos:  26% (41/154)   Comprimiendo objetos:  27% (42/154)   Comprimiendo objetos:  28% (44/154)   Comprimiendo objetos:  29% (45/154)   Comprimiendo objetos:  30% (47/154)   Comprimiendo objetos:  31% (48/154)   Comprimiendo objetos:  32% (50/154)   Comprimiendo objetos:  33% (51/154)   Comprimiendo objetos:  34% (53/154)   Comprimiendo objetos:  35% (54/154)   Comprimiendo objetos:  36% (56/154)   Comprimiendo objetos:  37% (57/154)   Comprimiendo objetos:  38% (59/154)   Comprimiendo objetos:  39% (61/154)   Comprimiendo objetos:  40% (62/154)   Comprimiendo objetos:  41% (64/154)   Comprimiendo objetos:  42% (65/154)   Comprimiendo objetos:  43% (67/154)   Comprimiendo objetos:  44% (68/154)   Comprimiendo objetos:  45% (70/154)   Comprimiendo objetos:  46% (71/154)   Comprimiendo objetos:  47% (73/154)   Comprimiendo objetos:  48% (74/154)   Comprimiendo objetos:  49% (76/154)   Comprimiendo objetos:  50% (77/154)   Comprimiendo objetos:  51% (79/154)   Comprimiendo objetos:  52% (81/154)   Comprimiendo objetos:  53% (82/154)   Comprimiendo objetos:  54% (84/154)   Comprimiendo objetos:  55% (85/154)   Comprimiendo objetos:  56% (87/154)   Comprimiendo objetos:  57% (88/154)   Comprimiendo objetos:  58% (90/154)   Comprimiendo objetos:  59% (91/154)   Comprimiendo objetos:  60% (93/154)   Comprimiendo objetos:  61% (94/154)   Comprimiendo objetos:  62% (96/154)   Comprimiendo objetos:  63% (98/154)   Comprimiendo objetos:  64% (99/154)   Comprimiendo objetos:  65% (101/154)   Comprimiendo objetos:  66% (102/154)   Comprimiendo objetos:  67% (104/154)   Comprimiendo objetos:  68% (105/154)   Comprimiendo objetos:  69% (107/154)   Comprimiendo objetos:  70% (108/154)   Comprimiendo objetos:  71% (110/154)   Comprimiendo objetos:  72% (111/154)   Comprimiendo objetos:  73% (113/154)   Comprimiendo objetos:  74% (114/154)   Comprimiendo objetos:  75% (116/154)   Comprimiendo objetos:  76% (118/154)   Comprimiendo objetos:  77% (119/154)   Comprimiendo objetos:  78% (121/154)   Comprimiendo objetos:  79% (122/154)   Comprimiendo objetos:  80% (124/154)   Comprimiendo objetos:  81% (125/154)   Comprimiendo objetos:  82% (127/154)   Comprimiendo objetos:  83% (128/154)   Comprimiendo objetos:  84% (130/154)   Comprimiendo objetos:  85% (131/154)   Comprimiendo objetos:  86% (133/154)   Comprimiendo objetos:  87% (134/154)   Comprimiendo objetos:  88% (136/154)   Comprimiendo objetos:  89% (138/154)   Comprimiendo objetos:  90% (139/154)   Comprimiendo objetos:  91% (141/154)   Comprimiendo objetos:  92% (142/154)   Comprimiendo objetos:  93% (144/154)   Comprimiendo objetos:  94% (145/154)   Comprimiendo objetos:  95% (147/154)   Comprimiendo objetos:  96% (148/154)   Comprimiendo objetos:  97% (150/154)   Comprimiendo objetos:  98% (151/154)   Comprimiendo objetos:  98% (152/154)   Comprimiendo objetos:  99% (153/154)   Comprimiendo objetos: 100% (154/154)   Comprimiendo objetos: 100% (154/154), listo.
+Escribiendo objetos:   0% (1/244)   Escribiendo objetos:   1% (3/244)   Escribiendo objetos:   2% (5/244)   Escribiendo objetos:   3% (8/244)   Escribiendo objetos:   4% (10/244)   Escribiendo objetos:   5% (13/244)   Escribiendo objetos:   6% (15/244)   Escribiendo objetos:   7% (18/244)   Escribiendo objetos:   8% (20/244)   Escribiendo objetos:   9% (22/244)   Escribiendo objetos:  10% (25/244)   Escribiendo objetos:  11% (27/244)   Escribiendo objetos:  12% (30/244)   Escribiendo objetos:  12% (30/244), 1.30 MiB | 789.00 KiB/s   Escribiendo objetos:  12% (30/244), 1.91 MiB | 752.00 KiB/s   Escribiendo objetos:  12% (30/244), 2.53 MiB | 718.00 KiB/s   Escribiendo objetos:  12% (30/244), 3.16 MiB | 699.00 KiB/s   Escribiendo objetos:  12% (30/244), 3.77 MiB | 687.00 KiB/s   Escribiendo objetos:  12% (30/244), 4.40 MiB | 680.00 KiB/s   Escribiendo objetos:  12% (30/244), 5.02 MiB | 674.00 KiB/s   Escribiendo objetos:  12% (30/244), 5.64 MiB | 671.00 KiB/s   Escribiendo objetos:  12% (30/244), 6.26 MiB | 667.00 KiB/s   Escribiendo objetos:  12% (30/244), 6.88 MiB | 641.00 KiB/s   Escribiendo objetos:  12% (30/244), 7.50 MiB | 635.00 KiB/s   Escribiendo objetos:  12% (30/244), 8.13 MiB | 634.00 KiB/s   Escribiendo objetos:  12% (30/244), 8.74 MiB | 637.00 KiB/s   Escribiendo objetos:  12% (30/244), 9.37 MiB | 639.00 KiB/s   Escribiendo objetos:  12% (30/244), 9.99 MiB | 639.00 KiB/s   Escribiendo objetos:  12% (30/244), 10.62 MiB | 639.00 KiB/s   Escribiendo objetos:  12% (30/244), 11.23 MiB | 638.00 KiB/s   Escribiendo objetos:  13% (32/244), 11.23 MiB | 638.00 KiB/s   Escribiendo objetos:  13% (34/244), 11.86 MiB | 640.00 KiB/s   Escribiendo objetos:  14% (35/244), 11.86 MiB | 640.00 KiB/s   Escribiendo objetos:  15% (37/244), 11.86 MiB | 640.00 KiB/s   Escribiendo objetos:  16% (40/244), 11.86 MiB | 640.00 KiB/s   Escribiendo objetos:  16% (40/244), 12.48 MiB | 638.00 KiB/s   Escribiendo objetos:  16% (40/244), 13.10 MiB | 640.00 KiB/s   Escribiendo objetos:  16% (40/244), 13.72 MiB | 599.00 KiB/s   Escribiendo objetos:  16% (40/244), 14.34 MiB | 597.00 KiB/s   Escribiendo objetos:  16% (40/244), 14.96 MiB | 595.00 KiB/s   Escribiendo objetos:  17% (42/244), 14.96 MiB | 595.00 KiB/s   Escribiendo objetos:  17% (42/244), 15.59 MiB | 578.00 KiB/s   Escribiendo objetos:  18% (44/244), 15.59 MiB | 578.00 KiB/s   Escribiendo objetos:  19% (47/244), 15.59 MiB | 578.00 KiB/s   Escribiendo objetos:  20% (49/244), 15.59 MiB | 578.00 KiB/s   Escribiendo objetos:  21% (52/244), 15.59 MiB | 578.00 KiB/s   Escribiendo objetos:  22% (54/244), 15.59 MiB | 578.00 KiB/s   Escribiendo objetos:  22% (54/244), 16.20 MiB | 576.00 KiB/s   Escribiendo objetos:  23% (57/244), 16.20 MiB | 576.00 KiB/s   Escribiendo objetos:  24% (59/244), 16.20 MiB | 576.00 KiB/s   Escribiendo objetos:  25% (61/244), 16.20 MiB | 576.00 KiB/s   Escribiendo objetos:  26% (64/244), 16.20 MiB | 576.00 KiB/s   Escribiendo objetos:  26% (64/244), 16.83 MiB | 578.00 KiB/s   Escribiendo objetos:  26% (64/244), 17.45 MiB | 577.00 KiB/s   Escribiendo objetos:  26% (64/244), 18.07 MiB | 578.00 KiB/s   Escribiendo objetos:  27% (66/244), 18.07 MiB | 578.00 KiB/s   Escribiendo objetos:  27% (66/244), 18.69 MiB | 577.00 KiB/s   Escribiendo objetos:  28% (69/244), 18.69 MiB | 577.00 KiB/s   Escribiendo objetos:  28% (70/244), 19.31 MiB | 612.00 KiB/s   Escribiendo objetos:  29% (71/244), 19.31 MiB | 612.00 KiB/s   Escribiendo objetos:  29% (72/244), 19.93 MiB | 609.00 KiB/s   Escribiendo objetos:  30% (74/244), 19.93 MiB | 609.00 KiB/s   Escribiendo objetos:  30% (74/244), 20.55 MiB | 609.00 KiB/s   Escribiendo objetos:  31% (76/244), 20.55 MiB | 609.00 KiB/s   Escribiendo objetos:  32% (79/244), 20.55 MiB | 609.00 KiB/s   Escribiendo objetos:  32% (80/244), 21.17 MiB | 622.00 KiB/s   Escribiendo objetos:  33% (81/244), 21.17 MiB | 622.00 KiB/s   Escribiendo objetos:  33% (82/244), 21.80 MiB | 619.00 KiB/s   Escribiendo objetos:  34% (83/244), 21.80 MiB | 619.00 KiB/s   Escribiendo objetos:  35% (86/244), 21.80 MiB | 619.00 KiB/s   Escribiendo objetos:  35% (86/244), 22.41 MiB | 616.00 KiB/s   Escribiendo objetos:  36% (88/244), 22.41 MiB | 616.00 KiB/s   Escribiendo objetos:  37% (91/244), 22.41 MiB | 616.00 KiB/s   Escribiendo objetos:  37% (92/244), 23.05 MiB | 618.00 KiB/s   Escribiendo objetos:  38% (93/244), 23.05 MiB | 618.00 KiB/s   Escribiendo objetos:  38% (94/244), 23.66 MiB | 618.00 KiB/s   Escribiendo objetos:  38% (94/244), 24.27 MiB | 618.00 KiB/s   Escribiendo objetos:  38% (94/244), 24.89 MiB | 622.00 KiB/s   Escribiendo objetos:  38% (94/244), 25.52 MiB | 627.00 KiB/s   Escribiendo objetos:  38% (94/244), 26.13 MiB | 627.00 KiB/s   Escribiendo objetos:  39% (96/244), 26.13 MiB | 627.00 KiB/s   Escribiendo objetos:  40% (98/244), 26.13 MiB | 627.00 KiB/s   Escribiendo objetos:  40% (100/244), 26.76 MiB | 634.00 KiB/s   Escribiendo objetos:  40% (100/244), 27.38 MiB | 638.00 KiB/s   Escribiendo objetos:  41% (101/244), 27.38 MiB | 638.00 KiB/s   Escribiendo objetos:  42% (103/244), 27.38 MiB | 638.00 KiB/s   Escribiendo objetos:  42% (104/244), 28.01 MiB | 641.00 KiB/s   Escribiendo objetos:  42% (104/244), 28.62 MiB | 639.00 KiB/s   Escribiendo objetos:  43% (105/244), 28.62 MiB | 639.00 KiB/s   Escribiendo objetos:  43% (106/244), 29.23 MiB | 638.00 KiB/s   Escribiendo objetos:  44% (108/244), 29.23 MiB | 638.00 KiB/s   Escribiendo objetos:  45% (110/244), 29.23 MiB | 638.00 KiB/s   Escribiendo objetos:  45% (112/244), 29.86 MiB | 639.00 KiB/s   Escribiendo objetos:  46% (113/244), 29.86 MiB | 639.00 KiB/s   Escribiendo objetos:  46% (114/244), 30.48 MiB | 640.00 KiB/s   Escribiendo objetos:  46% (114/244), 31.10 MiB | 640.00 KiB/s   Escribiendo objetos:  46% (114/244), 31.72 MiB | 640.00 KiB/s   Escribiendo objetos:  47% (115/244), 31.72 MiB | 640.00 KiB/s   Escribiendo objetos:  48% (118/244), 31.72 MiB | 640.00 KiB/s   Escribiendo objetos:  49% (120/244), 31.72 MiB | 640.00 KiB/s   Escribiendo objetos:  49% (120/244), 32.34 MiB | 639.00 KiB/s   Escribiendo objetos:  49% (120/244), 32.96 MiB | 640.00 KiB/s   Escribiendo objetos:  49% (120/244), 33.59 MiB | 639.00 KiB/s   Escribiendo objetos:  50% (122/244), 33.59 MiB | 639.00 KiB/s   Escribiendo objetos:  50% (122/244), 34.20 MiB | 638.00 KiB/s   Escribiendo objetos:  50% (124/244), 34.83 MiB | 640.00 KiB/s   Escribiendo objetos:  50% (124/244), 35.45 MiB | 638.00 KiB/s   Escribiendo objetos:  51% (125/244), 35.45 MiB | 638.00 KiB/s   Escribiendo objetos:  52% (127/244), 35.45 MiB | 638.00 KiB/s   Escribiendo objetos:  53% (130/244), 35.45 MiB | 638.00 KiB/s   Escribiendo objetos:  54% (132/244), 35.45 MiB | 638.00 KiB/s   Escribiendo objetos:  54% (134/244), 36.07 MiB | 640.00 KiB/s   Escribiendo objetos:  55% (135/244), 36.07 MiB | 640.00 KiB/s   Escribiendo objetos:  56% (137/244), 36.07 MiB | 640.00 KiB/s   Escribiendo objetos:  57% (140/244), 36.07 MiB | 640.00 KiB/s   Escribiendo objetos:  58% (142/244), 36.07 MiB | 640.00 KiB/s   Escribiendo objetos:  59% (144/244), 36.07 MiB | 640.00 KiB/s   Escribiendo objetos:  59% (144/244), 36.69 MiB | 638.00 KiB/s   Escribiendo objetos:  59% (144/244), 37.31 MiB | 640.00 KiB/s   Escribiendo objetos:  60% (147/244), 37.31 MiB | 640.00 KiB/s   Escribiendo objetos:  61% (149/244), 37.31 MiB | 640.00 KiB/s   Escribiendo objetos:  61% (150/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  62% (152/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  63% (154/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  64% (157/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  65% (159/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  66% (162/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  67% (164/244), 37.93 MiB | 638.00 KiB/s   Escribiendo objetos:  67% (164/244), 38.55 MiB | 640.00 KiB/s   Escribiendo objetos:  67% (164/244), 39.17 MiB | 638.00 KiB/s   Escribiendo objetos:  67% (164/244), 39.80 MiB | 640.00 KiB/s   Escribiendo objetos:  67% (164/244), 40.41 MiB | 638.00 KiB/s   Escribiendo objetos:  68% (166/244), 40.41 MiB | 638.00 KiB/s   Escribiendo objetos:  68% (168/244), 41.04 MiB | 640.00 KiB/s   Escribiendo objetos:  69% (169/244), 41.04 MiB | 640.00 KiB/s   Escribiendo objetos:  70% (171/244), 41.04 MiB | 640.00 KiB/s   Escribiendo objetos:  71% (174/244), 41.04 MiB | 640.00 KiB/s   Escribiendo objetos:  72% (176/244), 41.04 MiB | 640.00 KiB/s   Escribiendo objetos:  72% (176/244), 41.66 MiB | 638.00 KiB/s   Escribiendo objetos:  72% (176/244), 42.28 MiB | 640.00 KiB/s   Escribiendo objetos:  72% (178/244), 42.90 MiB | 638.00 KiB/s   Escribiendo objetos:  72% (178/244), 43.52 MiB | 634.00 KiB/s   Escribiendo objetos:  72% (178/244), 44.14 MiB | 632.00 KiB/s   Escribiendo objetos:  72% (178/244), 44.77 MiB | 634.00 KiB/s   Escribiendo objetos:  73% (179/244), 44.77 MiB | 634.00 KiB/s   Escribiendo objetos:  73% (180/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  74% (181/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  75% (183/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  76% (186/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  77% (188/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  78% (191/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  79% (193/244), 45.38 MiB | 632.00 KiB/s   Escribiendo objetos:  79% (194/244), 46.01 MiB | 634.00 KiB/s   Escribiendo objetos:  79% (194/244), 46.63 MiB | 632.00 KiB/s   Escribiendo objetos:  79% (194/244), 47.25 MiB | 633.00 KiB/s   Escribiendo objetos:  79% (194/244), 47.87 MiB | 632.00 KiB/s   Escribiendo objetos:  79% (194/244), 48.49 MiB | 634.00 KiB/s   Escribiendo objetos:  80% (196/244), 48.49 MiB | 634.00 KiB/s   Escribiendo objetos:  81% (198/244), 48.49 MiB | 634.00 KiB/s   Escribiendo objetos:  81% (198/244), 49.11 MiB | 637.00 KiB/s   Escribiendo objetos:  81% (198/244), 49.73 MiB | 640.00 KiB/s   Escribiendo objetos:  81% (198/244), 50.35 MiB | 638.00 KiB/s   Escribiendo objetos:  81% (198/244), 50.98 MiB | 631.00 KiB/s   Escribiendo objetos:  81% (198/244), 51.59 MiB | 629.00 KiB/s   Escribiendo objetos:  81% (198/244), 52.22 MiB | 630.00 KiB/s   Escribiendo objetos:  81% (198/244), 52.84 MiB | 629.00 KiB/s   Escribiendo objetos:  81% (198/244), 53.46 MiB | 579.00 KiB/s   Escribiendo objetos:  81% (198/244), 54.08 MiB | 578.00 KiB/s   Escribiendo objetos:  81% (198/244), 54.70 MiB | 580.00 KiB/s   Escribiendo objetos:  81% (198/244), 55.32 MiB | 578.00 KiB/s   Escribiendo objetos:  81% (200/244), 55.95 MiB | 580.00 KiB/s   Escribiendo objetos:  82% (201/244), 55.95 MiB | 580.00 KiB/s   Escribiendo objetos:  83% (203/244), 55.95 MiB | 580.00 KiB/s   Escribiendo objetos:  84% (205/244), 55.95 MiB | 580.00 KiB/s   Escribiendo objetos:  84% (206/244), 56.56 MiB | 586.00 KiB/s   Escribiendo objetos:  85% (208/244), 56.56 MiB | 586.00 KiB/s   Escribiendo objetos:  85% (208/244), 57.19 MiB | 588.00 KiB/s   Escribiendo objetos:  86% (210/244), 57.19 MiB | 588.00 KiB/s   Escribiendo objetos:  87% (213/244), 57.19 MiB | 588.00 KiB/s   Escribiendo objetos:  88% (215/244), 57.19 MiB | 588.00 KiB/s   Escribiendo objetos:  88% (216/244), 57.80 MiB | 583.00 KiB/s   Escribiendo objetos:  89% (218/244), 57.80 MiB | 583.00 KiB/s   Escribiendo objetos:  89% (218/244), 58.43 MiB | 588.00 KiB/s   Escribiendo objetos:  90% (220/244), 58.43 MiB | 588.00 KiB/s   Escribiendo objetos:  90% (222/244), 59.05 MiB | 639.00 KiB/s   Escribiendo objetos:  91% (223/244), 59.05 MiB | 639.00 KiB/s   Escribiendo objetos:  91% (224/244), 59.67 MiB | 640.00 KiB/s   Escribiendo objetos:  91% (224/244), 60.29 MiB | 638.00 KiB/s   Escribiendo objetos:  91% (224/244), 60.91 MiB | 640.00 KiB/s   Escribiendo objetos:  92% (225/244), 60.91 MiB | 640.00 KiB/s   Escribiendo objetos:  93% (227/244), 60.91 MiB | 640.00 KiB/s   Escribiendo objetos:  94% (230/244), 60.91 MiB | 640.00 KiB/s   Escribiendo objetos:  95% (232/244), 60.91 MiB | 640.00 KiB/s   Escribiendo objetos:  95% (234/244), 61.53 MiB | 638.00 KiB/s   Escribiendo objetos:  96% (235/244), 61.53 MiB | 638.00 KiB/s   Escribiendo objetos:  97% (237/244), 61.53 MiB | 638.00 KiB/s   Escribiendo objetos:  97% (238/244), 62.16 MiB | 640.00 KiB/s   Escribiendo objetos:  98% (240/244), 62.16 MiB | 640.00 KiB/s   Escribiendo objetos:  99% (242/244), 62.16 MiB | 640.00 KiB/s   Escribiendo objetos: 100% (244/244), 62.16 MiB | 640.00 KiB/s   Escribiendo objetos: 100% (244/244), 62.34 MiB | 629.00 KiB/s, listo.
+Total 244 (delta 10), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/10)[Kremote: Resolving deltas:  10% (1/10)[Kremote: Resolving deltas:  20% (2/10)[Kremote: Resolving deltas:  30% (3/10)[Kremote: Resolving deltas:  40% (4/10)[Kremote: Resolving deltas:  50% (5/10)[Kremote: Resolving deltas:  60% (6/10)[Kremote: Resolving deltas:  70% (7/10)[Kremote: Resolving deltas:  80% (8/10)[Kremote: Resolving deltas:  90% (9/10)[Kremote: Resolving deltas: 100% (10/10)[Kremote: Resolving deltas: 100% (10/10), completed with 10 local objects.[K
+To github.com:maRce10/hummingbird_song_evolution.git
+   7851309..db22625  master -> master
+]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git pushcommit -m "packrat added"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cpush[K[K
