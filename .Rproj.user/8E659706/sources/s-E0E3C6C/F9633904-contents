@@ -1,0 +1,943 @@
+---
+title: <center><font size="7"><b>Branchwise rates results</b></font></center>
+subtitle: <center><font size="5"><b><a href="https://github.com/maRce10/hummingbird_song_evolution">Hummingbird song evolution</a></b></font></center>
+author: <center><font size="4"><a href="http://marceloarayasalas.weebly.com/">Marcelo Araya-Salas, PhD</a></font></center>
+date: <center>`r format(Sys.Date(), "%d-%m-%Y")`</center>
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+      smooth_scroll: no
+fontsize: 12pt 
+editor_options: 
+  chunk_output_type: console
+---
+
+### Load packages
+```{r packages, message=FALSE, warning = FALSE, eval = TRUE}
+
+rm(list = ls())
+
+# unload all non-based packages
+out <- sapply(paste('package:', names(sessionInfo()$otherPkgs), sep = ""), function(x) try(detach(x, unload = FALSE, character.only = TRUE), silent = T))
+
+## add 'developer/' to packages to be installed from github
+x <- c(
+  "ggtree",
+  "ape",
+  "viridis",
+  "readxl",
+  "ggplot2",
+  "leaflet",
+   "phangorn",
+   "parallel",
+   "pbapply",
+    "cowplot",
+    "coda"
+    )
+  
+out <- lapply(x, function(y) {
+  # get pakage name
+  pkg <- strsplit(y, "/")[[1]]
+  pkg <- pkg[length(pkg)]
+  
+  # check if installed, if not then install
+  if (!pkg %in% installed.packages()[, "Package"])  {
+  if (grepl("/", y))
+  devtools::install_github(y, force = TRUE)
+  else
+  install.packages(y)
+  }
+  
+  # load package
+  try(require(pkg, character.only = T), silent = T)
+})
+
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+
+knitr::opts_chunk$set(dpi = 58, fig.width = 20, fig.height = 15)
+
+```
+
+### Set parameters, read data and make base ggtree plots
+```{r functions and parameters, message = FALSE, warning = FALSE, eval = TRUE}
+
+#colors for plots
+cols <- viridis(10, alpha = 0.7)
+
+# font size of clade labels
+fontsize <- 13
+
+# edge width
+lwd <- 2
+
+# functions to get descendant nodes
+select.tip.or.node <- function(element, tree) {
+    ifelse(element < Ntip(tree)+1, tree$tip.label[element], tree$node.label[element-Ntip(tree)])
+}
+
+get_edge_table <- function(phy){
+  
+    phy$node.label <- paste0("node", seq_len(Ntip(phy)))
+
+    edge_table <- data.frame(
+                "parent" = phy$edge[,1],
+                "par.name" = sapply(phy$edge[,1], select.tip.or.node, tree = phy),
+                "child" = phy$edge[,2],
+                "chi.name" = sapply(phy$edge[,2], select.tip.or.node, tree = phy),
+                length = phy$edge.length
+                )
+return(edge_table)
+}
+
+# make any numeric variable within a specific range 
+range01 <- function(x, min = 0, max = 1){
+  x <- x + min(x)
+  x <- (x-min(x))/(max(x)-min(x))
+
+  x <- x * (max - min)
+  
+  x <- x + min
+  
+  return(x)
+  }
+
+# ggplot2 theme
+theme_set(theme_classic(base_size = 14,base_family = "Arial"))
+
+# main tree
+phy <- read.nexus("data/processed/trees/ConsensoBayesTraits.trees")
+
+phy <- rotateConstr(phy = phy, constraint = rev(phy$tip))
+
+phy <- ladderize(phy)
+
+
+# read branchwise rates
+xls <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.xls")
+
+# get branchwise rates into a list
+branchwise_rates <- lapply(xls, function(x) {
+
+  X <- as.data.frame(read_excel(x))
+  
+  X$variable <- gsub("BranchWiseRate_|BranchWiseRates_|.xlsx", "", basename(x))
+  
+  # get the ones with r == 1 (r != 1 means significantly different than background rate)
+  X$log.r <- log(X$`Median Scalar (r)` + 1)
+
+  names(X)[7] <- "Optimized Rate (r * backgroundrate)"
+
+  domain <- range(0, 1)
+  
+  
+  pal_fun <- colorNumeric(palette = "viridis", domain = domain, reverse = TRUE)
+  
+    # previewColors(pal_fun, seq(min(domain), max(domain), length.out = 30))
+
+  X$r.for.color <- NA
+  
+  # color range for low rates
+  X$r.for.color[X$`Optimized Rate (r * backgroundrate)`< X$`Background Rate (per million year)`] <- range01(X$log.r[X$`Optimized Rate (r * backgroundrate)`< X$`Background Rate (per million year)`], min = 0.7, max = 0.8)
+  
+  # color range for high rates
+  X$r.for.color[X$`Optimized Rate (r * backgroundrate)`> X$`Background Rate (per million year)`] <- range01(X$log.r[X$`Optimized Rate (r * backgroundrate)`> X$`Background Rate (per million year)`], min = 0.1, max = 0.5)
+ 
+  X$rate.color <- "gray"
+  
+  X$rate.color <- pal_fun(X$r.for.color)
+  
+  # get gray the ones with less than 95% of time under background rate 
+  X$rate.color[X$`Percentage time scaled`< 95] <- "gray"
+  
+  return(X)
+  })
+
+# names(branchwise_rates) <-  gsub("BranchWiseRate_|BranchWiseRates_|.xlsx", "", basename(xls))
+
+names(branchwise_rates) <- c("Sequence complexity", "# of element types", "Acoustic space", "Between song variation")
+
+# get background rates per parameter
+background_rates <- sapply(branchwise_rates, function(x)
+  mean(x$`Background Rate (per million year)`))
+
+log_background_rates <- log(background_rates + 1)
+
+
+# put branchwise rates in a single data frame
+
+phy.btw.sng.vr <- drop.tip(phy, tip = setdiff(phy$tip.label, branchwise_rates$`Between song variation`$`Taxa List`[branchwise_rates$`Between song variation`$`No Taxa` == 1]))
+
+# ggplot2 theme
+theme_set(theme_tree2(base_size = 14,base_family = "Arial"))
+
+# song acoustic parameters
+song.acoust.param <- read.csv("data/processed/acoustic/Song parameters nightjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+song.acoust.param$species <- song.acoust.param$species_uscr
+
+sp.clade <- song.acoust.param[!duplicated(song.acoust.param$species) , c("species", "Clade")]
+
+# rename hummers
+sp.clade$maj.clade <- ifelse(sp.clade$Clade %in% c("Nightjars", "Swifts"), sp.clade$Clade, "Hummingbirds")
+
+# all clades Except for Patagona
+all.clade.nodes <- sapply(c("Emeralds", "Coquettes", "Swifts", "Brilliants", "Mangoes", "Hermits", "Nightjars", "Bees", "Mtn. Gems", "Topazes", "Hummingbirds"), function(x) getMRCA(phy = phy, tip = if(x == "Hummingbirds") sp.clade$species[!sp.clade$Clade %in% c("Swifts", "Nightjars")] else sp.clade$species[sp.clade$Clade == x]))
+
+
+# 3 major clades
+maj.clade.nodes <- sapply(c("Swifts", "Nightjars", "Hummingbirds"), function(x) getMRCA(phy = phy, tip = if(x == "Hummingbirds") sp.clade$species[!sp.clade$Clade %in% c("Swifts", "Nightjars")] else sp.clade$species[sp.clade$Clade == x]))
+
+sp.clade.bsv  <- sp.clade[sp.clade$species %in%  phy.btw.sng.vr$tip.label, ]
+
+# 3 major clades for between song variation
+maj.clade.nodes.bsv <- sapply(c("Swifts", "Nightjars", "Hummingbirds"), function(x) getMRCA(phy = phy.btw.sng.vr, tip = if(x == "Hummingbirds") sp.clade.bsv$species[!sp.clade.bsv$Clade %in% c("Swifts", "Nightjars")] else sp.clade.bsv$species[sp.clade.bsv$Clade == x]))
+
+# all clades Except for Patagona for between song variation
+all.clade.nodes.bsv <- sapply(c("Emeralds", "Coquettes", "Swifts", "Brilliants", "Mangoes", "Hermits", "Nightjars", "Bees", "Mtn. Gems", "Topazes", "Hummingbirds"), function(x) getMRCA(phy = phy.btw.sng.vr, tip = if(x == "Hummingbirds") sp.clade.bsv$species[!sp.clade.bsv$Clade %in% c("Swifts", "Nightjars")] else sp.clade.bsv$species[sp.clade.bsv$Clade == x]))
+
+# MRCAs for major clades
+major.clade.nodes <- sapply(c("Nightjars", "Swifts", "Hummingbirds"), function(x) getMRCA(phy = phy, tip = sp.clade$species[sp.clade$maj.clade == x]))
+
+# MRCAs for major clades for between song variation
+major.clade.nodes.bsv <- sapply(c("Nightjars", "Swifts", "Hummingbirds"), function(x) getMRCA(phy = phy.btw.sng.vr, tip = sp.clade.bsv$species[sp.clade.bsv$maj.clade == x]))
+
+# base ggtree graph major clades  
+gg.all.clade <- ggtree(phy, ladderize = FALSE, size = lwd) +
+  theme_tree2() +  xlim(NA, 130) + 
+  theme(text=element_text(size = 35)) + labs(x = "Millions of years")
+  
+# add clade labels
+    for(i in 1:length(all.clade.nodes))
+  gg.all.clade <- gg.all.clade + geom_cladelabel(node = all.clade.nodes[i], label = names(all.clade.nodes)[i],   fontsize = fontsize, align=TRUE, barsize = 2, offset = if(names(all.clade.nodes)[i] == "Hummingbirds") 33 else 0.7, color = if(names(all.clade.nodes)[i] == "Hummingbirds") "gray81" else "gray45")
+  
+# base ggtree graph major clades for between song variation
+gg.all.clade.bsv <- ggtree(phy.btw.sng.vr, ladderize = FALSE, size = lwd) +
+  theme_tree2() + xlim(NA, 130) + 
+  theme(text=element_text(size = 35))
+
+# add labels
+    for(i in 1:length(all.clade.nodes.bsv))
+  gg.all.clade.bsv <- gg.all.clade.bsv + geom_cladelabel(node = all.clade.nodes.bsv[i], label = names(all.clade.nodes.bsv)[i],   fontsize = fontsize, align=TRUE, barsize = 2, offset = if(names(all.clade.nodes.bsv)[i] == "Hummingbirds") 33 else 0.7, color = if(names(all.clade.nodes.bsv)[i] == "Hummingbirds") "gray81" else "gray45")
+
+
+# tree with 10 tips for the all clades except Patagona
+all.clade.collapse.tree <- drop.tip(phy, tip = c(setdiff(phy$tip.label, sp.clade$species[!duplicated(sp.clade$Clade)]), "Patagona_gigas"))
+
+# rename tips
+all.clade.collapse.tree$tip.label <- c("Nightjars", "Swifts", "Hermits", "Topazes", "Mangoes", "Emeralds", "Mtn. Gems", "Bees", "Brilliants", "Coquettes")
+
+# base ggtree graph all clades  
+gg.all.clade.collapse.tree <- ggtree(all.clade.collapse.tree, ladderize = FALSE, size = lwd) +
+  theme_tree2() + 
+  theme(text=element_text(size = 35)) +
+    geom_hilight(node = 13, fill = viridis(10)[8]) + # add hummingbird clade label
+  geom_label(aes(label = label), hjust = 0.8, size = 10) # add labels to tips
+  
+# tree with 3 tips for the 3 major clades
+major.clade.collapse.tree <- drop.tip(phy, tip = setdiff(phy$tip.label, c("Phaethornis_guy", "Nyctidromus_albicollis","Streptoprocne_zonaris")))
+
+# rename tips
+major.clade.collapse.tree$tip.label <- c("Nightjars", "Swifts", "Hummingbirds")
+
+# base ggtree graph major clades  
+gg.major.clade.collapse.tree <- ggtree(major.clade.collapse.tree, ladderize = FALSE) +
+  theme_tree2() + 
+  theme(text=element_text(size = 35)) + 
+  geom_label(aes(label = label), hjust = 0.8, size = 10) 
+
+
+### all nodes for each clade
+all.nodes <- lapply(all.clade.nodes, function(x) 
+        c(x, allDescendants(x = phy)[[x]]))
+
+all.nodes.bsv <- lapply(all.clade.nodes.bsv, function(x) 
+        c(x, allDescendants(x = phy.btw.sng.vr)[[x]]))
+
+### all nodes for each of 3 major clade
+maj.3.nodes <- lapply(maj.clade.nodes, function(x) 
+        c(x, allDescendants(x = phy)[[x]]))
+
+maj.3.nodes.bsv <- lapply(maj.clade.nodes.bsv, function(x) 
+        c(x, allDescendants(x = phy.btw.sng.vr)[[x]]))
+
+```
+
+&nbsp;
+
+# Branchwhise evolutionary rates on song complexity parameters
+
+- Blueish colors: significantly faster than background brownian motion rates
+- Greenish colors: significantly slower than background brownian motion rates
+- Significance determined as speding >= 95% of time at a rate higher than background
+
+
+```{r branchwise coloring, message = FALSE, warning = FALSE, echo = TRUE, eval = TRUE}
+
+ggtrs <- lapply(1:length(branchwise_rates), function(y){
+  
+  X <- branchwise_rates[[y]]
+  
+    X$node <- sapply(X$`Taxa List`, function(y) {
+    
+    tips <- strsplit(y, split = ",")[[1]]
+    
+    phytemp <- if (X$variable[1] == "Btwn") phy.btw.sng.vr else phy
+    
+    node <- if (length(tips) == 1) which(phytemp$tip == tips) else
+    getMRCA(phy = phytemp, tip = tips)
+  })
+  
+    if (X$variable[1] != "Btwn")
+  gg.all.clade %<+% X + aes(color=I(rate.color))  else
+    gg.all.clade.bsv %<+% X + aes(color=I(rate.color))
+  # + ggtitle(X$variable[1])
+  
+})
+
+names(ggtrs) <- names(branchwise_rates)
+
+```
+
+
+## Sequence complexity
+
+```{r, warning = FALSE}
+
+ggtrs$`Sequence complexity`
+
+```
+
+## Acoustic space
+
+```{r, warning = FALSE}
+
+ggtrs$`Acoustic space`
+
+```
+
+## Between song variation
+
+```{r, warning = FALSE}
+
+ggtrs$`Between song variation`
+
+```
+
+## Number of element types per song
+
+```{r, warning = FALSE}
+
+ggtrs$`# of element types`
+
+```
+
+&nbsp;
+
+<div class="alert alert-info">
+
+* Evolutionary rate more heterogeneous in hummingbirds, and close to background brownian motion rate in outgroups except for "Between song variation" that evolved slower mostly in outgroups and a bit in hermits
+
+* Hermits (or a groups within hermits) tend to evolve slower in all four parameters
+
+* Acoustic space shows the highest contrasts between hummingbirds and the two outgroups
+
+* Overall complexity in bee hummingbirds has evolved faster
+than in other hummingbirds except between song variation
+
+</div>
+
+&nbsp;
+
+---
+
+# Posterior evolutionary rates per clade
+
+```{r mean rates per clade, message = FALSE, warning = FALSE, echo = TRUE, eval = FALSE}
+
+# read branchwise rates
+trees <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.trees$")
+
+rate.trees <- lapply(trees, read.nexus)
+
+names(rate.trees) <- c("Acoustic space", "Between song variation", "Sequence complexity", "# of element types")
+
+# get mean posterior rates per parameter 
+post_rates_l <- pblapply(1:length(trees), cl = detectCores() - 1, function(y){
+  
+  # extract 1 multiphylo with branch length representing amount of change 
+  rate.tree <- rate.trees[[y]]
+
+  # get unstransformed tree edge lengths
+ if (names(rate.trees)[y] != "Between song variation")
+  edge_tab <- get_edge_table(phy) else
+    edge_tab <- get_edge_table(phy.btw.sng.vr)
+    # edge_tab1 <- get_edge_table(drop.tip(phy, tip = setdiff(phy$tip.label, rate.tree[[1]]$tip.label)))
+  
+  node.list <- if(names(rate.trees)[y] != "Between song variation") all.nodes else all.nodes.bsv
+  
+  # loop over each sub tree to get rates for each branch x tree
+  rates <- lapply(rate.tree, function(z){
+      
+    # edge tab for transformed
+    edge_tab_rates <- get_edge_table(z)   
+
+    # change rate column name
+    names(edge_tab_rates)[5] <- "rate.length"
+    
+    # merge unstransformed and transformed 
+    mrg_edge_tab <- merge(edge_tab, edge_tab_rates[, c("parent", "child", "rate.length")])
+    
+    # calculate rate
+    mrg_edge_tab$rate <- mrg_edge_tab$rate.length / mrg_edge_tab$length  
+    
+    })
+
+  # put results in a  matrix
+  rate.mat <- do.call(cbind, rates)
+  
+  # make temporary edge table to get parent numbers
+  mrg_edge_tab_temp <- merge(edge_tab, get_edge_table(rate.tree[[1]])[, c("parent", "child", "chi.name")])
+  
+  # include parent label
+  rate.mat <- cbind(mrg_edge_tab_temp$parent, rate.mat)
+
+  # get mean rate across trees for each clade
+  rates.by.clade <- lapply(1:length(node.list), function(w)
+    data.frame(clade = names(node.list)[w], rate = apply(rate.mat[rate.mat[,1] %in% node.list[[w]], ], 2, mean)))
+  
+  rates.by.clade.df <- do.call(rbind, rates.by.clade)
+
+  rates.by.clade.df$variable <- names(rate.trees)[y]
+
+  return(rates.by.clade.df)
+  })
+
+# put all together in a single data frame
+post_rates <- do.call(rbind, post_rates_l)
+
+post_rates$log.rate <- log(post_rates$rate + 1)
+
+# save as RDS
+saveRDS(post_rates, "./data/processed/posterior_evolutionary_rates_per_clade.RDS")
+
+```
+
+```{r mean rates per 3 major clade, message = FALSE, warning = FALSE, echo = TRUE, eval = FALSE}
+
+# read branchwise rates
+trees <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.trees$")
+
+rate.trees <- lapply(trees, read.nexus)
+
+names(rate.trees) <-  c("Acoustic space", "Between song variation", "Sequence complexity", "# of element types")
+
+# get mean posterior rates per parameter 
+post_rates_l <- pblapply(1:length(trees), cl = detectCores() - 1, function(y){
+  
+  # extract 1 multiphylo with branch length representing amount of change 
+  rate.tree <- rate.trees[[y]]
+
+  # get unstransformed tree edge lengths
+ if (names(rate.trees)[y] != "Between song variation")
+  edge_tab <- get_edge_table(phy) else
+    edge_tab <- get_edge_table(phy.btw.sng.vr)
+  
+  node.list <- if(names(rate.trees)[y] != "Between song variation") maj.3.nodes else maj.3.nodes.bsv
+  
+  # loop over each sub tree to get rates for each branch x tree
+  rates <- lapply(rate.tree, function(z){
+      
+    # edge tab for transformed
+    edge_tab_rates <- get_edge_table(z)   
+
+    # change rate column name
+    names(edge_tab_rates)[5] <- "rate.length"
+    
+    # merge unstransformed and transformed 
+    mrg_edge_tab <- merge(edge_tab, edge_tab_rates[, c("parent", "child", "rate.length")])
+    
+    # calculate rate
+    mrg_edge_tab$rate <- mrg_edge_tab$rate.length / mrg_edge_tab$length  
+    })
+
+  # put results in a  matrix
+  rate.mat <- do.call(cbind, rates)
+  
+   # make temporary edge table to get parent numbers
+  mrg_edge_tab_temp <- merge(edge_tab, get_edge_table(rate.tree[[1]])[, c("parent", "child", "chi.name")])
+  
+  # include parent label
+  rate.mat <- cbind(mrg_edge_tab_temp$parent, rate.mat)
+
+  # get mean rate across trees for each clade
+  rates.by.clade <- lapply(1:length(node.list), function(w)
+    data.frame(clade = names(node.list)[w], rate = apply(rate.mat[rate.mat[,1] %in% node.list[[w]], ], 2, mean)))
+  
+  rates.by.clade.df <- do.call(rbind, rates.by.clade)
+
+  rates.by.clade.df$variable <- names(rate.trees)[y]
+
+  return(rates.by.clade.df)
+  })
+
+# put all together in a single data frame
+post_rates <- do.call(rbind, post_rates_l)
+
+post_rates$log.rate <- log(post_rates$rate + 1)
+
+# save as RDS
+saveRDS(post_rates, "./data/processed/posterior_evolutionary_rates_per_clade_3_major_clades.RDS")
+
+```
+
+```{r plots of posterior rates per clade, message = FALSE, warning = FALSE, echo = TRUE, eval = TRUE}
+
+post_rates <- readRDS("./data/processed/posterior_evolutionary_rates_per_clade.RDS")
+
+  post_rates$maj.clade <- ifelse(post_rates$clade %in% c("Swifts", "Nightjars"), post_rates$clade, "Hummingbirds")
+  
+post_rates_3_clades <- readRDS("./data/processed/posterior_evolutionary_rates_per_clade_3_major_clades.RDS")
+
+
+# for plot have clade as species
+post_rates_3_clades$species <- post_rates_3_clades$clade
+post_rates$species <- post_rates$clade
+
+gg.rates <- lapply(unique(post_rates$variable), function(w){
+
+  # all clades
+  gg.post.rate <- gg.all.clade.collapse.tree
+ 
+  # get data subset
+  dat <- post_rates[post_rates$variable == w, ]
+  
+  # keep only data within 95% quantile
+  dat.l <- lapply(unique(dat$clade), function(x){
+    
+    X <- dat[dat$clade == x, ] 
+  # if (x != "Nightjars")
+  # {
+    Z <- X$log.rate
+    class(Z) <- "mcmc"  
+    hpd <- HPDinterval(Z)
+    Y <- X[X$log.rate > hpd[1] & X$log.rate < hpd[2], ] 
+  # } 
+  # else Y <- X
+  # 
+  return(Y)
+  
+        # if (x == "Nightjars" & X$variable[1] == "Between song variation") return(X) else
+    })
+  
+
+  dat <- do.call(rbind, dat.l)
+  
+  # add facet violin
+  gg.post.rate <- facet_plot(gg.post.rate, data = dat, geom = geom_violin, aes(x= log.rate, group = label, fill = maj.clade), panel = paste("Log", w, "rates")) +
+      scale_fill_manual(values = cols[c(5, 3, 8)]) + 
+    theme(legend.position = "none") + geom_vline(xintercept = log_background_rates[w], lty = 2, size = 1.5, col = c("transparent", "black"))
+
+     
+   # 3 major clades
+  gg.post.rate.3.maj.clades <- gg.major.clade.collapse.tree
+ 
+  # get data subset
+  dat <- post_rates_3_clades[post_rates_3_clades$variable == w, ]
+  
+  # keep only data within 95% quantile
+  dat.l <- lapply(unique(dat$clade), function(x){
+    
+    X <- dat[dat$clade == x, ] 
+    
+    try(Y <- X[X$log.rate > quantile(X$log.rate, 0.025) & X$log.rate < quantile(X$log.rate, 0.975), ], silent = TRUE)
+  
+        if (x == "Nightjars" & X$variable[1] == "Between song variation") return(X) else
+    return(Y)
+    })
+  
+
+  dat <- do.call(rbind, dat.l)
+  
+  # add facet violin
+  gg.post.rate.3.maj.clades <- facet_plot(gg.post.rate.3.maj.clades, data = dat, geom = geom_violin, aes(x= log.rate, group = label, fill = label), panel = paste("Log", w, "rates"))  +
+        scale_fill_manual(values = cols[c(8, 3, 5)]) + 
+    theme(legend.position = "none") +
+    geom_vline(xintercept = log_background_rates[w], lty = 2, size = 1.5,  col = c("transparent", "black"))
+
+  
+ # # plot both together
+  cow_plt <- plot_grid(gg.post.rate.3.maj.clades, gg.post.rate, ncol = 2)
+  
+  return(cow_plt)
+  })
+
+names(gg.rates) <- unique(post_rates$variable)
+
+```
+
+
+## Sequence complexity
+
+```{r, warning = FALSE}
+
+gg.rates$`Sequence complexity`
+
+```
+
+## Acoustic space
+
+```{r, warning = FALSE}
+
+gg.rates$`Acoustic space`
+
+```
+
+## Between song variation
+
+```{r, warning = FALSE}
+
+gg.rates$`Between song variation`
+
+```
+
+## Number of elements types per song
+
+```{r, warning = FALSE}
+
+gg.rates$`# of element types`
+
+```
+
+&nbsp;
+<div class="alert alert-info">
+
+* Overall, evolutionary rates tend to be higher in hummingbirds, with some important differences between hummingbird sub-clades
+
+* Mountain gems show the highest evolutionary rates among all clades
+
+* Nightjars and swifts very similar except for "number of element types"
+
+</div>
+
+&nbsp;
+
+---
+
+# Posterior evolutionary correlation between complexity parameters
+
+As a metric of phenotypic integration
+
+(should we use phylogenetically control regressions?)
+
+```{r correlation between single parameters, message = FALSE, warning = FALSE, echo = TRUE, eval = FALSE}
+
+# proof of concept that trimming file share node labels
+# ac_sp_tr <- rate.trees$`Acoustic space`[[1]]
+# 
+# btwn_tr <- rate.trees$`Between song variation`[[1]]
+# 
+# prn_ac_sp_tr <- drop.tip(ac_sp_tr, tip = setdiff(ac_sp_tr$tip.label, btwn_tr$tip.label))
+# 
+# jpeg("trim_phylo.jpeg", width = 1000, height = 5000, pointsize = 20)
+#   par(mar = rep(0, 4), mfrow = c(1, 2))
+#   plot.phylo(btwn_tr, show.tip.label = FALSE, use.edge.length = FALSE)
+#   nodelabels()
+#   
+#   plot.phylo(prn_ac_sp_tr, show.tip.label = FALSE, use.edge.length = FALSE)
+#   nodelabels()
+#   dev.off()
+
+
+
+# read branchwise rates
+trees <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.trees$")
+
+rate.trees <- lapply(trees, read.nexus)
+
+names(rate.trees) <-  c("Acoustic space", "Between song variation", "Sequence complexity", "# of element types")
+
+rate.trees <- rate.trees[c(1, 3, 4, 2)]
+
+# make combinations of 2 parameters at the time
+grd_trees <- t(combn(names(rate.trees), 2))
+
+# get get correlation between complexity 
+evo_cors_l <- pblapply(1:nrow(grd_trees), cl = detectCores() - 1, function(y){
+  
+  # extract 1 bayes traits multiphylo with branch length representing amount of change 
+  bt_tr1 <- rate.trees[[grd_trees[y, 1]]]
+  bt_tr2 <- rate.trees[[grd_trees[y, 2]]]
+  
+    # prune tree if different ntips
+ if (Ntip(bt_tr1[[1]]) != Ntip(bt_tr2[[1]]))
+  {
+    bt_tr1 <- lapply(bt_tr1, drop.tip, tip = setdiff(bt_tr1[[1]]$tip.label, bt_tr2[[1]]$tip.label))
+
+  # get node list depending on number of species
+    node.list <- all.nodes.bsv
+    
+     # get unstransformed tree edge lengths
+    edge_tab <- get_edge_table(phy.btw.sng.vr)
+    # edge_tab <- get_edge_table(drop.tip(phy, tip = setdiff(phy$tip.label, phy.btw.sng.vr$tip.label)))
+    
+    } else { # if both trees have 318 species
+     # get unstransformed tree edge lengths
+    edge_tab <- get_edge_table(phy)
+   
+    # node list
+   node.list <- all.nodes
+    }
+  
+  # make edge rate table template
+  edge_tab_templ <- get_edge_table(bt_tr1[[1]])   
+
+  # change rate column name
+  names(edge_tab_templ)[5] <- "delete"
+  
+  # merge unstransformed and transformed 
+  edge_tab_templ <- merge(edge_tab, edge_tab_templ[, c("parent", "child", "delete")])
+  
+  edge_tab_templ$delete <- NULL
+  
+  # loop over each sub tree to get rates for each branch x tree
+  rates_tr1 <- sapply(bt_tr1, function(z){
+      
+  # edge tab for transformed
+  edge_tab_rates <- get_edge_table(z)   
+
+  # change rate column name
+  names(edge_tab_rates)[5] <- "rate.length"
+  
+  # merge unstransformed and transformed 
+  mrg_edge_tab <- merge(edge_tab_templ, edge_tab_rates[, c("parent", "child", "rate.length")])
+  
+  # calculate rate
+  mrg_edge_tab$rate <- mrg_edge_tab$rate.length / mrg_edge_tab$length   
+  
+  return(mrg_edge_tab$rate) 
+  })
+
+  # rates second tree
+  rates_tr2 <- sapply(bt_tr2, function(z){
+      
+  # edge tab for transformed
+  edge_tab_rates <- get_edge_table(z)   
+
+  # change rate column name
+  names(edge_tab_rates)[5] <- "rate.length"
+  
+  # merge unstransformed and transformed 
+  mrg_edge_tab <- merge(edge_tab_templ, edge_tab_rates[, c("parent", "child", "rate.length")])
+  
+  # calculate rate
+  mrg_edge_tab$rate <- mrg_edge_tab$rate.length / mrg_edge_tab$length  
+  
+  return(mrg_edge_tab$rate)
+  })
+  
+ # sample 1000 tree values randomly for each tree
+ # ang get correlation of log rates
+  cors_clade_l <- lapply(1:length(node.list), function(w)
+  {
+  
+    # select rates for each clade based on nodes
+    rt1 <- rates_tr1[edge_tab_templ$parent %in% node.list[[w]], ]
+    rt2 <- rates_tr2[edge_tab_templ$parent %in% node.list[[w]], ]
+    
+    cors <- sapply(1:10000, function(x)
+     cor(log(rt1[, sample(1:ncol(rt1), 1), drop = TRUE] + 1), log(rt2[, sample(1:ncol(rt2), 1), drop = TRUE] + 1))
+       )
+    
+    return(data.frame(clade = names(node.list)[w], cor = cors))
+    })
+  
+  cors_clade <- do.call(rbind, cors_clade_l)
+  
+  # names(cors_clade) <- names(node.list)
+  
+  cors_df <- data.frame(clade = cors_clade$clade, param1 = grd_trees[y, 1], param2 = grd_trees[y, 2], cor = cors_clade$cor)
+  
+  return(cors_df)
+  })
+
+# put all together in a single data frame
+evo_cors <- do.call(rbind, evo_cors_l)
+
+
+# save as RDS
+saveRDS(evo_cors, "./data/processed/posterior_evolutionary_rate_correlations.RDS")
+
+```
+
+```{r make ggplots correlation of rates, message=FALSE, warning=FALSE}
+
+evo_cors <- readRDS("./data/processed/posterior_evolutionary_rate_correlations.RDS")
+
+evo_cors$variable.pair <- paste0(evo_cors$param1, "-", evo_cors$param2)
+
+evo_cors_3_clades <- evo_cors[evo_cors$clade %in% c("Nightjars", "Swifts", "Hummingbirds"), ]
+
+# remove hummingbirds
+evo_cors <- evo_cors[evo_cors$clade != "Hummingbirds", ]
+
+# for plot have clade as species
+evo_cors_3_clades$species <- as.character(evo_cors_3_clades$clade)
+evo_cors$species <- as.character(evo_cors$clade)
+
+evo_cors$maj.clade <- as.character(ifelse(evo_cors$species %in% c("Nightjars", "Swifts"), evo_cors$species, "Hummingbirds"))
+
+
+gg_cor_rates <- lapply(c(unique(evo_cors$variable.pair), "overall"), function(w){
+
+  # all clades
+  gg.cor.rate <- gg.all.clade.collapse.tree + 
+    geom_vline(xintercept = 0, lty = 2, size = 1.5,  col = c("transparent", "black"))
+ 
+  # get data subset
+  if (w != "overall")
+  dat <- evo_cors[evo_cors$variable.pair == w, ] else
+    dat <- evo_cors
+  
+  # keep only data within 95% quantile
+  dat.l <- lapply(unique(dat$species), function(x){
+    
+    X <- dat[dat$species == x, ] 
+    Z <- X$cor
+  class(Z) <- "mcmc"  
+  hpd <- HPDinterval(Z)
+    
+  Y <- X[X$cor > hpd[1] & X$cor < hpd[2], ]  
+  return(Y)
+    })
+  
+  dat <- do.call(rbind, dat.l)
+  
+  # add facet violin
+  gg.cor.rate <- facet_plot(gg.cor.rate, data = dat, geom = geom_violin, aes(x= cor, group = label, fill = maj.clade), panel = w) +
+      scale_fill_manual(values = cols[c(8, 3, 5)]) +
+    theme(legend.position = "none") 
+
+     
+   # 3 major clades
+  gg.cor.rate.3.maj.clades <- gg.major.clade.collapse.tree + geom_vline(xintercept = 0, lty = 2, size = 1.5, col = c("transparent", "black"))
+ 
+  # get data subset
+    if (w != "overall")
+  dat <- evo_cors_3_clades[evo_cors_3_clades$variable.pair == w, ] else
+    dat <- evo_cors_3_clades
+  
+  # keep only data within 95% quantile
+  dat.l <- lapply(unique(dat$clade), function(x){
+    
+      X <- dat[dat$clade == x, ] 
+      Z <- X$cor
+      class(Z) <- "mcmc"  
+      hpd <- HPDinterval(Z)
+      Y <- X[X$cor > hpd[1] & X$cor < hpd[2], ]  
+      return(Y)
+        })
+  
+
+  dat <- do.call(rbind, dat.l)
+  
+  # add facet violin
+  gg.cor.rate.3.maj.clades <-
+    facet_plot(gg.cor.rate.3.maj.clades, data = dat, geom = geom_violin, aes(x= cor, group = label, fill = label), panel = w)  +
+        scale_fill_manual(values = cols[c(8, 3, 5)]) + 
+    theme(legend.position = "none") 
+  
+ # # plot both together
+  cow_plt <- plot_grid(gg.cor.rate.3.maj.clades, gg.cor.rate, ncol = 2)
+  
+  return(cow_plt)
+  })
+
+names(gg_cor_rates) <- c(unique(evo_cors$variable.pair), "overall")
+
+```
+
+## Acoustic space vs Sequence complexity
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Acoustic space-Sequence complexity`
+
+```
+
+## Acoustic space vs Number of element types
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Acoustic space-# of element types`
+
+```
+
+## Acoustic space vs Between song variation
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Acoustic space-Between song variation`
+  
+```
+
+## Sequence complexity vs Number of element types
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Sequence complexity-# of element types`
+
+```
+
+## Sequence complexity vs Between song variation
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`Sequence complexity-Between song variation`
+
+```
+
+## Number of element types vs Between song variation
+
+```{r, warning = FALSE}
+
+gg_cor_rates$`# of element types-Between song variation`
+
+```
+
+
+## Overall correlation between evolutionary rates of all 4 complexity parameters
+
+```{r, warning = FALSE}
+
+gg_cor_rates$overall
+
+```
+
+&nbsp;
+
+<div class="alert alert-info">
+
+* Nightjars show low integration across all parameter pairs
+
+* Hummingbirds and swifts show similar levels of integration and higher than nightjars 
+
+* However, only hummingbirds show "significant" integration (always higher than 0) for all pairwise comparisons as well as overall integration
+ 
+
+</div>
+
+&nbsp;
+---
+
+<font size="5">Session information</font>
+
+```{r session info, echo=F}
+
+sessionInfo()
+
+
+```

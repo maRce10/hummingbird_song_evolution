@@ -1,6 +1,10 @@
 {
-    "path" : "~/Documentos/Github_projects/hummingbird_song_evolution",
+    "path" : "~/sda5/Github_projects/hummingbird_song_evolution/output",
     "sortOrder" : [
+        {
+            "ascending" : false,
+            "columnIndex" : 4
+        },
         {
             "ascending" : true,
             "columnIndex" : 2

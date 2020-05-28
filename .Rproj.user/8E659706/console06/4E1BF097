@@ -1,152 +1,4 @@
 
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-359439-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-359439-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p10.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p11.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p12.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p13.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p7.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p8.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18421-p9.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18442-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18442-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB18442-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB20465-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB20465-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-BLB20465-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML205565-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML205565-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML205565-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML205565-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML205565-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML6164-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML6164-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML6164-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-guy-ML6164-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-102622-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-102623-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-11798-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-257794-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-28108-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-28108-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-400021-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-63848-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-63850-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-91508-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-hispidus-91508-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113248-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113249-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113249-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113249-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113249-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113249-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113278-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113278-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113278-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-idaliae-ML113278-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-koepckeae-ML163857-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-107762-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154061-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154061-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154061-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154061-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154061-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154061-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154083-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154083-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154083-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154083-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154083-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-154083-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longirostris-264458-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-202417-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-202417-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-213805-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-22879-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-44089-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-64985-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p10.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p11.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p12.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p13.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p14.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p15.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p16.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p17.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p18.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p19.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p20.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p21.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p22.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p23.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p24.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p25.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p26.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p27.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p28.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p29.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p30.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p31.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p32.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p33.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p34.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p35.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p36.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p37.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p38.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p39.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p40.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p41.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p42.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p43.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p44.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p45.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p46.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p47.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p48.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p7.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p8.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21068-p9.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21076-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21076-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21076-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21076-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21077-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21077-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p10.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p11.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p6.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p7.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p8.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-BLB21085-p9.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-ML6174-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-ML6174-p2.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-ML6174-p3.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-ML6174-p4.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-longuemareus-ML6174-p5.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-119447-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-213908-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-238807-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-257793-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-260455-p1.jpeg
- create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-34377-p1.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-34377-p2.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-42701-p1.jpeg
  create mode 100644 output/acoustic_analysis/long-spectros/Hermits/Phaethornis-malaris-59221-p1.jpeg
@@ -1147,4 +999,15 @@ Total 244 (delta 10), reused 0 (delta 0)
 remote: Resolving deltas:   0% (0/10)[Kremote: Resolving deltas:  10% (1/10)[Kremote: Resolving deltas:  20% (2/10)[Kremote: Resolving deltas:  30% (3/10)[Kremote: Resolving deltas:  40% (4/10)[Kremote: Resolving deltas:  50% (5/10)[Kremote: Resolving deltas:  60% (6/10)[Kremote: Resolving deltas:  70% (7/10)[Kremote: Resolving deltas:  80% (8/10)[Kremote: Resolving deltas:  90% (9/10)[Kremote: Resolving deltas: 100% (10/10)[Kremote: Resolving deltas: 100% (10/10), completed with 10 local objects.[K
 To github.com:maRce10/hummingbird_song_evolution.git
    7851309..db22625  master -> master
-]0;/home/m/Documentos/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/Documentos/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/Documentos/Github_projects/hummingbird_songg_evolution[00m$ git pushcommit -m "packrat added"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cpush[K[K
+ffmpeg -i /tmp/RtmpW3KcZL/scroll.spectro.temp.mp4 -i  /tmp/RtmpW3KcZL/audio.scroll.spectro.wav -vcodec libx264 -aacodec libmp3lame -shortest -y scroll.spectro.mp4[A[A[C[C[C[C[C[C[C[Ci /tmp/RtmpW3KcZL/audio.scroll.spectro.wav -vcodec libx264 -ac[1P[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C"[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cframerate 50 -i /tmp/RtmpW3KcZL/fee%04d.tiff -c:v libx264 -profile:v high -crf 2 -pix_fmt yuv420p -y /tm[12Pp/RtmpW3KcZL/scroll.spectro.temp.mp4[A[A[C[C[C[C[C[C[C[30Pgit push origin master
+[K
+[K[A[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+Contando objetos: 45, listo.
+Delta compression using up to 4 threads.
+Comprimiendo objetos:   2% (1/36)   Comprimiendo objetos:   5% (2/36)   Comprimiendo objetos:   8% (3/36)   Comprimiendo objetos:  11% (4/36)   Comprimiendo objetos:  13% (5/36)   Comprimiendo objetos:  16% (6/36)   Comprimiendo objetos:  19% (7/36)   Comprimiendo objetos:  22% (8/36)   Comprimiendo objetos:  25% (9/36)   Comprimiendo objetos:  27% (10/36)   Comprimiendo objetos:  30% (11/36)   Comprimiendo objetos:  33% (12/36)   Comprimiendo objetos:  36% (13/36)   Comprimiendo objetos:  38% (14/36)   Comprimiendo objetos:  41% (15/36)   Comprimiendo objetos:  44% (16/36)   Comprimiendo objetos:  47% (17/36)   Comprimiendo objetos:  50% (18/36)   Comprimiendo objetos:  52% (19/36)   Comprimiendo objetos:  55% (20/36)   Comprimiendo objetos:  58% (21/36)   Comprimiendo objetos:  61% (22/36)   Comprimiendo objetos:  63% (23/36)   Comprimiendo objetos:  66% (24/36)   Comprimiendo objetos:  69% (25/36)   Comprimiendo objetos:  72% (26/36)   Comprimiendo objetos:  75% (27/36)   Comprimiendo objetos:  77% (28/36)   Comprimiendo objetos:  80% (29/36)   Comprimiendo objetos:  83% (30/36)   Comprimiendo objetos:  86% (31/36)   Comprimiendo objetos:  88% (32/36)   Comprimiendo objetos:  91% (33/36)   Comprimiendo objetos:  94% (34/36)   Comprimiendo objetos:  97% (35/36)   Comprimiendo objetos: 100% (36/36)   Comprimiendo objetos: 100% (36/36), listo.
+Escribiendo objetos:   2% (1/45)   Escribiendo objetos:   4% (2/45)   Escribiendo objetos:   6% (3/45)   Escribiendo objetos:   8% (4/45)   Escribiendo objetos:  11% (5/45)   Escribiendo objetos:  13% (6/45)   Escribiendo objetos:  15% (7/45)   Escribiendo objetos:  17% (8/45)   Escribiendo objetos:  20% (9/45)   Escribiendo objetos:  22% (10/45)   Escribiendo objetos:  24% (11/45)   Escribiendo objetos:  26% (12/45)   Escribiendo objetos:  28% (13/45)   Escribiendo objetos:  31% (14/45)   Escribiendo objetos:  33% (15/45)   Escribiendo objetos:  37% (17/45)   Escribiendo objetos:  40% (18/45)   Escribiendo objetos:  42% (19/45)   Escribiendo objetos:  44% (20/45)   Escribiendo objetos:  46% (21/45)   Escribiendo objetos:  48% (22/45)   Escribiendo objetos:  51% (23/45)   Escribiendo objetos:  53% (24/45)   Escribiendo objetos:  55% (25/45)   Escribiendo objetos:  57% (26/45)   Escribiendo objetos:  60% (27/45)   Escribiendo objetos:  62% (28/45)   Escribiendo objetos:  64% (29/45)   Escribiendo objetos:  66% (30/45)   Escribiendo objetos:  68% (31/45)   Escribiendo objetos:  71% (32/45)   Escribiendo objetos:  73% (33/45)   Escribiendo objetos:  75% (34/45)   Escribiendo objetos:  77% (35/45)   Escribiendo objetos:  80% (36/45)   Escribiendo objetos:  82% (37/45)   Escribiendo objetos:  84% (38/45)   Escribiendo objetos:  86% (39/45)   Escribiendo objetos:  86% (39/45), 1.30 MiB | 232.00 KiB/s   Escribiendo objetos:  88% (40/45), 1.30 MiB | 232.00 KiB/s   Escribiendo objetos:  88% (40/45), 1.91 MiB | 163.00 KiB/s   Escribiendo objetos:  91% (41/45), 1.91 MiB | 163.00 KiB/s   Escribiendo objetos:  91% (41/45), 2.54 MiB | 143.00 KiB/s   Escribiendo objetos:  91% (41/45), 3.18 MiB | 137.00 KiB/s   Escribiendo objetos:  93% (42/45), 3.18 MiB | 137.00 KiB/s   Escribiendo objetos:  95% (43/45), 3.18 MiB | 137.00 KiB/s   Escribiendo objetos:  97% (44/45), 3.18 MiB | 137.00 KiB/s   Escribiendo objetos: 100% (45/45), 3.18 MiB | 137.00 KiB/s   Escribiendo objetos: 100% (45/45), 3.37 MiB | 145.00 KiB/s, listo.
+Total 45 (delta 12), reused 0 (delta 0)
+remote: Resolving deltas:   0% (0/12)[Kremote: Resolving deltas:  16% (2/12)[Kremote: Resolving deltas:  25% (3/12)[Kremote: Resolving deltas:  33% (4/12)[Kremote: Resolving deltas:  41% (5/12)[Kremote: Resolving deltas:  50% (6/12)[Kremote: Resolving deltas:  58% (7/12)[Kremote: Resolving deltas:  66% (8/12)[Kremote: Resolving deltas:  75% (9/12)[Kremote: Resolving deltas:  83% (10/12)[Kremote: Resolving deltas:  91% (11/12)[Kremote: Resolving deltas: 100% (12/12)[Kremote: Resolving deltas: 100% (12/12), completed with 10 local objects.[K
+To github.com:maRce10/hummingbird_song_evolution.git
+   db22625..605e11b  master -> master
+]0;/home/m/sda5/Github_projects/hummingbird_song_evolution]0;m@m-MacBookPro: ~/sda5/Github_projects/hummingbird_song_evolution[01;32mm@m-MacBookPro[00m:[01;34m~/sda5/Github_projects/hummingbird_song_evoluution[00m$ 

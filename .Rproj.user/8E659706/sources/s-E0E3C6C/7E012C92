@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1588796598682.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7E012C92",
+    "lastKnownWriteTime" : 1588798264,
+    "last_content_update" : 1588798264694,
+    "path" : "~/sda5/Github_projects/hummingbird_song_evolution/scripts/Evolutionary_dynamics_analysis.Rmd",
+    "project_path" : "scripts/Evolutionary_dynamics_analysis.Rmd",
+    "properties" : {
+        "chunk_output_type" : "console",
+        "cursorPosition" : "1684,26",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

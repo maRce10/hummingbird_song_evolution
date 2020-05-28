@@ -81,16 +81,19 @@ theme_set(theme_classic(base_size = 14,base_family = "Arial"))
 
 ##### Prepare data for trait change trends
 
-```{r data for trends, eval = FALSE}
+```{r data for trends non duplicated values, eval = FALSE}
 
 # read branchwise rates
 trees <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.trees$")
 
 rate.trees <- lapply(trees, read.nexus)
 
+songs.complx.param <- read.csv("data/processed/acoustic/log10 songs complexity parameters nightjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+head(songs.complx.param)
 # names(rate.trees) <- c("Acoustic space", "Between song variation", "Sequence complexity", "# of element types")
 
-names(rate.trees) <- c("acoustic_space", "between_song_variation", "sequence_complexity", "element_types")
+names(rate.trees) <- names(songs.complx.param)[2:5]
 
 # get mean posterior rates per parameter 
 pathrates_l <- lapply(1:length(trees), function(y){
@@ -107,15 +110,108 @@ pathrates_l <- lapply(1:length(trees), function(y){
   # put them in a matrix
     rates_mt <- do.call(cbind, rates_l)
     
+    # paste in a single vector
     rates_clm <- apply(rates_mt, 1, paste, collapse = ",")
     
-    rates_clm <- paste(names(rates_clm), rates_clm)
-      
-    writeLines(rates_clm, paste0("./output/pathwise_rates_", names(rate.trees)[y], ".txt"))
+    # extract parameter
+    param <- songs.complx.param[, c("species", names(rate.trees)[y])]
+    
+    # remove duplicated values
+    param <- param[!duplicated(param), ]
+    
+    # count species with a single value and remove them
+    tab <- table(param$species)
+    param <- param[param$species %in% names(tab)[tab > 1], ]
+    
+    # put it in a dataframe
+    sps <- data.frame(species = names(rates_clm))
+    
+    # add acoustic parameter
+    sps$param <- sapply(sps$species, function(x)
+      paste(param[param$species == x, 2], collapse = ","))
+
+    # paste species and parameter
+    sp_param <- apply(sps, 1, paste, collapse = "\tUnlinked\t")
+
+    # paste species parameter and rates    
+    rates_clm <- paste(sp_param, rates_clm)
+    
+    # remove the ones with only 1 value
+    rates_clm <- grep(paste(param$species, collapse = "|"), rates_clm, value = TRUE)
+    
+    # save
+    writeLines(rates_clm, paste0("./output/pathwise_rates_non_duplicates_", names(rate.trees)[y], ".txt"))
     })
 
 ```
 
+```{r data for trends non duplicated values, eval = FALSE}
+
+# read branchwise rates
+trees <- list.files(path = "./output/bayestraits", full.names = TRUE, pattern = "\\.trees$")
+
+rate.trees <- lapply(trees, read.nexus)
+
+songs.complx.param <- read.csv("data/processed/acoustic/log10 songs complexity parameters nightjars swifts and hummingbirds.csv", stringsAsFactors = FALSE)
+
+head(songs.complx.param)
+# names(rate.trees) <- c("Acoustic space", "Between song variation", "Sequence complexity", "# of element types")
+
+names(rate.trees) <- names(songs.complx.param)[2:5]
+
+# get mean posterior rates per parameter 
+pathrates_l <- lapply(1:length(trees), function(y){
+  
+  # extract 1 multiphylo with branch length representing amount of change 
+  rate.tree <- rate.trees[[y]]
+
+  # loop over each sub tree to get pathwise rates for each species
+  rates_l <- pblapply(rate.tree, cl = detectCores() - 1, function(z) try(distRoot(z, method = "patristic"), silent = TRUE))
+    
+  # remove errors
+  rates_l <- rates_l[sapply(rates_l, class) != "try-error"]
+  
+  # put them in a matrix
+    rates_mt <- do.call(cbind, rates_l)
+    
+    # paste in a single vector
+    rates_clm <- apply(rates_mt, 1, paste, collapse = ",")
+    
+    # extract parameter
+    param <- songs.complx.param[, c("species", names(rate.trees)[y])]
+    
+    # remove duplicated values
+    out <- lapply(unique(param$species), function(x){
+          Y <- param[param$species == x, ]
+
+      Y <- Y[order(Y[, 2]), ]
+      
+      Y[duplicated(Y[, 2]), 2] <-  Y[duplicated(Y[, 2]), 2] + seq(0.0000001, (sum(duplicated(Y[, 2]))) / 10000000, length.out = sum(duplicated(Y[, 2])))
+
+    return(Y)    
+    })
+    
+    
+    param <- do.call(rbind, out)
+    
+    # put it in a dataframe
+    sps <- data.frame(species = names(rates_clm))
+    
+    # add acoustic parameter
+    sps$param <- sapply(sps$species, function(x)
+      paste(param[param$species == x, 2], collapse = ","))
+
+    # paste species and parameter
+    sp_param <- apply(sps, 1, paste, collapse = "\tUnlinked\t")
+
+    # paste species parameter and rates    
+    rates_clm <- paste(sp_param, rates_clm)
+    
+    # save
+    writeLines(rates_clm, paste0("./output/pathwise_rates_adding_variation_", names(rate.trees)[y], ".txt"))
+    })
+
+```
 
 
 

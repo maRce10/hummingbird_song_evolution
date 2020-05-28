@@ -27,7 +27,7 @@ if (any(df$sizes > 99.9)) {
 
 system("git add .")
 
-system('git commit -m "update readme"')
+system('git commit -m "pathwise rate files"')
 
 system("git push origin master")
 
